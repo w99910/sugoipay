@@ -1,25 +1,16 @@
 <script lang="ts" setup>
-import { Handle, Position, type Connection, useVueFlow } from '@vue-flow/core'
+import { Handle, Position } from '@vue-flow/core'
 import { LayoutGrid } from 'lucide-vue-next';
 import { reactive, ref } from 'vue'
 import { NodeResizer } from '@vue-flow/node-resizer'
 import common from '@/lib/common';
 
-const props = defineProps(['data'])
+const props = defineProps(['data', 'type'])
 
 const data = reactive({
     name: props.data.name
 })
 
-const { findNode } = useVueFlow();
-
-function isValidConnection(connection: Connection) {
-    const sourceNode = findNode(connection.source);
-    if (!sourceNode) {
-        return false;
-    }
-    return ['plan', 'addon'].includes(sourceNode.type);
-}
 </script>
 
 <template>
@@ -32,7 +23,7 @@ function isValidConnection(connection: Connection) {
             </div> <input class="nodrag text-purple-500" type="text" placeholder="Enter product name"
                 v-model="data.name" />
         </div>
-        <Handle type="target" :position="Position.Bottom" :is-valid-connection="isValidConnection" />
+        <Handle type="target" :position="Position.Bottom" />
     </div>
 </template>
 

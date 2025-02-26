@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Handle, Position, } from '@vue-flow/core'
-import { Frame, ChevronRight } from 'lucide-vue-next';
+import { Braces, ChevronDown } from 'lucide-vue-next';
 import { reactive, ref } from 'vue'
 import { NodeResizer } from '@vue-flow/node-resizer'
 import common from '@/lib/common';
@@ -11,7 +11,6 @@ const props = defineProps(['data'])
 
 const data = reactive({
     name: props.data.name,
-    isFocus: false,
 })
 
 </script>
@@ -19,13 +18,12 @@ const data = reactive({
 <template>
     <div class="custom-node">
         <Handle type="source" :position="Position.Top" />
-        <NodeResizer :is-visible="data.isFocus" class="rounded-lg" color="transparent" :min-width="common.node.minWidth"
+        <NodeResizer class="rounded-lg" color="transparent" :min-width="common.node.minWidth"
             :min-height="common.node.minHeight" />
         <div class="flex items-center gap-x-2 bg-gray-100 p-2">
-            <div class="p-2 rounded bg-[#34a0a4]">
-                <Frame :size="16" color="white" />
-            </div> <input @focusin="data.isFocus = true" @focusout="data.isFocus = false" class="nodrag text-[#34a0a4]"
-                type="text" placeholder="Enter plan name" v-model="data.name" />
+            <div class="p-2 rounded bg-[#3753d1]">
+                <Braces :size="16" color="white" />
+            </div> <span class="text-[#3753d1] text-sm">Feature Condition</span>
         </div>
 
         <div class="flex flex-col gap-y-2 p-2">
@@ -34,8 +32,8 @@ const data = reactive({
                 class="group/collapsible text-sm text-gray-500 p-2 border rounded flex items-start flex-col">
                 <CollapsibleTrigger class="flex  justify-between items-center w-full">
                     Billing Cycle
-                    <ChevronRight :size="16"
-                        class="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                    <ChevronDown :size="16"
+                        class="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
                 </CollapsibleTrigger>
                 <CollapsibleContent class="mt-2">
                     <div>
@@ -46,8 +44,8 @@ const data = reactive({
             <Collapsible class="group/collapsible text-sm text-gray-500 p-2 border rounded flex items-start flex-col">
                 <CollapsibleTrigger class="flex  justify-between items-center w-full">
                     Pricing
-                    <ChevronRight :size="16"
-                        class="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                    <ChevronDown :size="16"
+                        class="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
                 </CollapsibleTrigger>
                 <CollapsibleContent class="mt-2">
                     <div>

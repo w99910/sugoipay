@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Handle, Position, type Connection, useVueFlow } from '@vue-flow/core'
+import { Handle, Position, } from '@vue-flow/core'
 import { Shield } from 'lucide-vue-next';
 import { reactive, ref } from 'vue'
 import { NodeResizer } from '@vue-flow/node-resizer'
@@ -9,16 +9,6 @@ const props = defineProps(['data'])
 const data = reactive({
     name: props.data.name
 })
-
-const { findNode } = useVueFlow();
-
-function isValidConnection(connection: Connection) {
-    const targetNode = findNode(connection.target);
-    if (!targetNode) {
-        return false;
-    }
-    return ['plan', 'addon'].includes(targetNode.type);
-}
 
 </script>
 
@@ -32,7 +22,7 @@ function isValidConnection(connection: Connection) {
             </div> <input class="nodrag text-[#1e6091]" type="text" placeholder="Enter feature name"
                 v-model="data.name" />
         </div>
-        <Handle type="source" :position="Position.Top" :is-valid-connection="isValidConnection" />
+        <Handle type="source" :position="Position.Top" />
     </div>
 </template>
 
