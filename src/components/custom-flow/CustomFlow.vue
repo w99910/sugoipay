@@ -44,9 +44,18 @@ onConnect((connection: Connection) => {
 })
 
 
-onNodeDragStop((a) => {
+onNodeDragStop((drag) => {
+    const node = drag.node;
+
+    // make sure that node doesn't have any connection
+    for (let edge of common.data.edges) {
+        if (edge.source === node.id || edge.target === node.id) {
+            return;
+        }
+    }
+
     // Assume 'a' is defined and a.event.target is the div you want to test.
-    const div = document.querySelector('.vue-flow__nodes')?.querySelector(`[data-id="${a.node.id}"]`) as HTMLDivElement;
+    const div = document.querySelector('.vue-flow__nodes')?.querySelector(`[data-id="${drag.node.id}"]`) as HTMLDivElement;
     const divRect = div.getBoundingClientRect();
     const margin: number = 50; // Tolerance in pixels
 
@@ -128,25 +137,23 @@ onNodeDragStop((a) => {
                     continue;
                 }
 
-                if (!common.canConnect(sourceNode, a.node)) {
+                if (!common.canConnect(sourceNode, drag.node)) {
                     continue;
                 }
 
-                // console.log({ sourceNode, targetNode, current: a.node, edgeId: edgeId, edges: common.data.edges })
-
-                // remove current edge
                 common.data.edges.push({
-                    id: sourceNode.id + '-' + a.node.id,
+                    id: sourceNode.id + '-' + drag.node.id,
                     source: sourceNode.id,
-                    target: a.node.id,
+                    target: drag.node.id,
                 })
 
                 common.data.edges.push({
-                    id: a.node.id + '-' + targetNode.id,
-                    source: a.node.id,
+                    id: drag.node.id + '-' + targetNode.id,
+                    source: drag.node.id,
                     target: targetNode.id,
                 })
 
+                // remove current edge
                 common.data.edges = common.data.edges.filter(({ id }) => id !== (sourceNode.id + '-' + targetNode.id));
 
                 break;

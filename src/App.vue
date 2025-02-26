@@ -14,6 +14,9 @@ import {
   MenubarMenu,
   MenubarSeparator,
   MenubarTrigger,
+  MenubarSub,
+  MenubarSubTrigger,
+  MenubarSubContent,
 } from './components/ui/menubar';
 import useDragAndDrop from './useDnD'
 
@@ -43,11 +46,12 @@ const width = window.innerWidth;
 
 const height = window.innerHeight;
 
-const selectT = () => {
+const addNode = (type: string) => {
   const node = {
     id: Math.random().toString(),
     position: { x: Math.random() * 500, y: Math.random() * 500 },
     label: 'Random Node',
+    type: type,
   };
 
   addNodes(node)
@@ -141,14 +145,27 @@ onPaneContextMenu((e) => {
               <MenubarTrigger class="gap-x-1">Create
               </MenubarTrigger>
               <MenubarContent>
-                <MenubarItem @select="selectT">
-                  New Plan
-                </MenubarItem>
-                <MenubarItem>New Addon</MenubarItem>
-                <MenubarSeparator />
-                <MenubarItem>New Feature</MenubarItem>
-                <MenubarSeparator />
-                <MenubarItem>New Feature Group</MenubarItem>
+                <MenubarSub>
+                  <MenubarSubTrigger>Node</MenubarSubTrigger>
+                  <MenubarSubContent>
+                    <MenubarItem @select="addNode('plan')">
+                      New Plan
+                    </MenubarItem>
+                    <MenubarSeparator />
+                    <MenubarItem @select="addNode('addon')">New Addon</MenubarItem>
+                    <MenubarSeparator />
+                    <MenubarItem @select="addNode('feature')">New Feature</MenubarItem>
+                    <MenubarSeparator />
+                  </MenubarSubContent>
+                </MenubarSub>
+                <MenubarSub>
+                  <MenubarSubTrigger>Action</MenubarSubTrigger>
+                  <MenubarSubContent>
+                    <MenubarItem @select="addNode('featureCondition')">Feature Condition</MenubarItem>
+                    <MenubarSeparator />
+                    <MenubarItem @select="addNode('setMeteredFeature')">Set Metered Feature</MenubarItem>
+                  </MenubarSubContent>
+                </MenubarSub>
               </MenubarContent>
             </MenubarMenu>
             <MenubarMenu>

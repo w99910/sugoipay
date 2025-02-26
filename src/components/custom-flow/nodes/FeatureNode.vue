@@ -16,10 +16,10 @@ const data = reactive({
     <div class="custom-node">
         <NodeResizer class="rounded-lg" color="transparent" :min-width="common.node.minWidth"
             :min-height="common.node.minHeight" />
-        <div class="flex items-center gap-x-2">
+        <div class="flex items-center gap-x-2 bg-gray-100 p-1.5">
             <div class="p-2 rounded bg-[#1e6091]">
-                <Shield :size="16" color="white" />
-            </div> <input class="nodrag text-[#1e6091]" type="text" placeholder="Enter feature name"
+                <Shield :size="common.iconSize" color="white" />
+            </div> <input class="nodrag font-semibold text-[#1e6091]" type="text" placeholder="Enter feature name"
                 v-model="data.name" />
         </div>
         <Handle type="source" :position="Position.Top" />

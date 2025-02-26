@@ -20,10 +20,10 @@ const data = reactive({
         <Handle type="source" :position="Position.Top" />
         <NodeResizer class="rounded-lg" color="transparent" :min-width="common.node.minWidth"
             :min-height="common.node.minHeight" />
-        <div class="flex items-center gap-x-2 bg-gray-100 p-2">
+        <div class="flex items-center gap-x-2 bg-gray-100 p-1.5">
             <div class="p-2 rounded bg-[#3753d1]">
-                <Braces :size="16" color="white" />
-            </div> <span class="text-[#3753d1] text-sm">Feature Condition</span>
+                <Braces :size="common.iconSize" color="white" />
+            </div> <span class="text-[#3753d1] font-semibold text-sm">Feature Condition</span>
         </div>
 
         <div class="flex flex-col gap-y-2 p-2">
@@ -32,7 +32,7 @@ const data = reactive({
                 class="group/collapsible text-sm text-gray-500 p-2 border rounded flex items-start flex-col">
                 <CollapsibleTrigger class="flex  justify-between items-center w-full">
                     Billing Cycle
-                    <ChevronDown :size="16"
+                    <ChevronDown :size="common.iconSize"
                         class="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
                 </CollapsibleTrigger>
                 <CollapsibleContent class="mt-2">
@@ -44,7 +44,7 @@ const data = reactive({
             <Collapsible class="group/collapsible text-sm text-gray-500 p-2 border rounded flex items-start flex-col">
                 <CollapsibleTrigger class="flex  justify-between items-center w-full">
                     Pricing
-                    <ChevronDown :size="16"
+                    <ChevronDown :size="common.iconSize"
                         class="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
                 </CollapsibleTrigger>
                 <CollapsibleContent class="mt-2">

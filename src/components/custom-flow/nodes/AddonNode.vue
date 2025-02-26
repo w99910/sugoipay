@@ -18,10 +18,10 @@ const data = reactive({
         <Handle type="source" :position="Position.Top" />
         <NodeResizer class="rounded-lg" color="transparent" :min-width="common.node.minWidth"
             :min-height="common.node.minHeight" />
-        <div class="flex items-center gap-x-2">
+        <div class="flex items-center gap-x-2 bg-gray-100 p-1.5">
             <div class="p-2 rounded bg-[#99d98c]">
-                <DiamondPlus :size="16" color="white" />
-            </div> <input class="nodrag text-[#99d98c]" type="text" placeholder="Enter addon name"
+                <DiamondPlus :size="common.iconSize" color="white" />
+            </div> <input class="nodrag font-semibold text-[#99d98c]" type="text" placeholder="Enter addon name"
                 v-model="data.name" />
         </div>
         <Handle type="target" :position="Position.Bottom" />

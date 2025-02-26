@@ -17,10 +17,10 @@ const data = reactive({
     <div class="custom-node">
         <NodeResizer class="rounded-lg" color="transparent" :min-width="common.node.minWidth"
             :min-height="common.node.minHeight" />
-        <div class="flex items-center gap-x-2">
+        <div class="flex items-center gap-x-2 bg-gray-100 p-1.5">
             <div class="p-2 rounded bg-purple-500">
-                <LayoutGrid :size="16" color="white" />
-            </div> <input class="nodrag text-purple-500" type="text" placeholder="Enter product name"
+                <LayoutGrid :size="common.iconSize" color="white" />
+            </div> <input class="nodrag font-semibold text-purple-500" type="text" placeholder="Enter product name"
                 v-model="data.name" />
         </div>
         <Handle type="target" :position="Position.Bottom" />

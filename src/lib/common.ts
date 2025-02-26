@@ -6,6 +6,7 @@ export default {
         minWidth: 240,
         minHeight: 30,
     },
+    iconSize: 14,
     data: reactive({
         nodes: [
             {
@@ -30,24 +31,24 @@ export default {
                 id: '4',
                 type: 'feature',
                 data: { name: 'Feature A' },
-                position: { x: 0, y: 550 },
+                position: { x: 0, y: 650 },
             },
             {
                 id: '5',
                 type: 'feature',
                 data: { name: 'Feature B' },
-                position: { x: 450, y: 300 },
+                position: { x: 450, y: 350 },
             },
             {
                 id: '6',
                 type: 'setMeteredFeature',
                 data: { name: 'Feature B' },
-                position: { x: 200, y: 350 },
+                position: { x: 200, y: 450 },
             },
             {
                 id: '7',
                 type: 'featureCondition',
-                position: { x: -250, y: 300 },
+                position: { x: -300, y: 350 },
             },
         ],
         edges: [{ id: '2-1', target: '1', source: '2' },

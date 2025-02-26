@@ -19,8 +19,8 @@ const data = reactive({
         <Handle type="source" :position="Position.Top" />
         <div class="flex items-center gap-x-2 bg-gray-100 p-1.5">
             <div class="p-2 rounded bg-[#3753d1]">
-                <Table :size="14" color="white" />
-            </div> <span class="text-[#3753d1] text-sm">Set Metered Feature</span>
+                <Table :size="common.iconSize" color="white" />
+            </div> <span class="text-[#3753d1] font-semibold text-sm">Set Metered Feature</span>
         </div>
         <Handle type="target" :position="Position.Bottom" />
     </div>
