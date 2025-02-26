@@ -168,9 +168,20 @@ onPaneContextMenu((e) => {
                 </MenubarSub>
               </MenubarContent>
             </MenubarMenu>
+
             <MenubarMenu>
               <MenubarTrigger class="gap-x-1">
                 Save
+              </MenubarTrigger>
+            </MenubarMenu>
+            <MenubarMenu>
+              <MenubarTrigger class="gap-x-1">
+                Import
+              </MenubarTrigger>
+            </MenubarMenu>
+            <MenubarMenu>
+              <MenubarTrigger class="gap-x-1">
+                Export
               </MenubarTrigger>
             </MenubarMenu>
           </Menubar>
