@@ -5,10 +5,10 @@ import { reactive, ref } from 'vue'
 import { NodeResizer } from '@vue-flow/node-resizer'
 import common from '@/lib/common';
 
-const props = defineProps(['data', 'type'])
+const props = defineProps(['data', 'type', 'name'])
 
 const data = reactive({
-    name: props.data.name
+    name: props.name
 })
 
 console.log('mounted product node')

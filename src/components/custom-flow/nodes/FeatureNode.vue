@@ -3,6 +3,7 @@ import { Handle, Position, } from '@vue-flow/core'
 import { Shield } from 'lucide-vue-next';
 import { reactive, ref } from 'vue'
 import common from '@/lib/common';
+import { Textarea } from '@/components/ui/textarea'
 const props = defineProps(['data'])
 import {
     NumberField,
@@ -15,7 +16,8 @@ import {
 const data = reactive({
     name: props.data.name,
     total: 10,
-    type: 'ability'
+    type: 'ability',
+    description: ''
 })
 
 console.log('mounted feature node')
@@ -33,7 +35,7 @@ console.log('mounted feature node')
                 v-model="data.name" />
         </div>
         <div class="p-3 flex items-center gap-y-2 flex-col h-full">
-            <div class="w-full flex items-center gap-x-2 justify-between px-2">
+            <div class="w-full flex items-center gap-x-2 justify-between">
                 <button @click="data.type = 'ability'"
                     :class="{ 'bg-gray-700 p-1.5 text-gray-100': data.type === 'ability' }"
                     class="rounded w-full py-1.5 border">Ability</button>
@@ -41,7 +43,7 @@ console.log('mounted feature node')
                     :class="{ 'bg-gray-700 p-1.5  text-gray-100': data.type === 'usage' }"
                     class="rounded w-full py-1.5 border">Usage</button>
             </div>
-            <div v-show="data.type === 'usage'" class="flex items-center gap-x-2 mt-2">
+            <div v-show="data.type === 'usage'" class="flex items-center gap-x-4 mt-2">
                 <span class="text-gray-600">Limit Threshold</span>
                 <NumberField class="max-w-[200px] nodrag" v-model="data.total" id="threshold" :default-value="10"
                     :min="-1">
@@ -52,6 +54,7 @@ console.log('mounted feature node')
                     </NumberFieldContent>
                 </NumberField>
             </div>
+            <Textarea class="nodrag" v-model="data.description" placeholder="Enter feature description" />
         </div>
 
         <Handle type="source" :position="Position.Top" />

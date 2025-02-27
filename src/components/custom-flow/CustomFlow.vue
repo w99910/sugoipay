@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref, markRaw } from 'vue'
+import { markRaw, onMounted, watch } from 'vue'
 import useDragAndDrop from '@/useDnD'
 import { Controls } from '@vue-flow/controls'
 import { MiniMap } from '@vue-flow/minimap'
-import { VueFlow, useVueFlow, Panel, ConnectionMode, type Connection, getIncomers } from '@vue-flow/core'
+import { VueFlow, useVueFlow, Panel, ConnectionMode, type Connection, useNodesData } from '@vue-flow/core'
 import ProductNode from '@/components/custom-flow/nodes/ProductNode.vue'
 import PlanNode from '@/components/custom-flow/nodes/PlanNode.vue'
 import FeatureNode from '@/components/custom-flow/nodes/FeatureNode.vue'
@@ -20,12 +20,15 @@ import LetCustomerSelectQuantity from './nodes/LetCustomerSelectQuantity.vue'
 import { toast } from 'vue-sonner'
 const { onDragOver, onDragLeave, isDragOver } = useDragAndDrop()
 
-const { onConnect, addEdges, onNodeDragStop, findEdge, findNode, onNodesChange, applyNodeChanges, onEdgesChange, applyEdgeChanges, getConnectedEdges } = useVueFlow()
+const vueFlow = useVueFlow();
+const { onConnect, addEdges, onNodeDragStop, findEdge, findNode, onNodesChange, applyNodeChanges, onEdgesChange, applyEdgeChanges, } = vueFlow;
 
 onNodesChange(async (changes) => {
+    // console.log(changes)
     const nextChanges = []
 
     for (const change of changes) {
+        // console.log(change.type)
         if (change.type === 'remove') {
             const isConfirmed = await common.confirm();
             console.log(isConfirmed)
@@ -41,8 +44,6 @@ onNodesChange(async (changes) => {
 })
 
 onEdgesChange(async (changes) => {
-    console.log(changes)
-
     applyEdgeChanges(changes)
 })
 
@@ -60,11 +61,9 @@ const nodeTypes = {
     letCustomerSelectQuantity: markRaw(LetCustomerSelectQuantity)
 } as any
 
-
-onConnect((connection: Connection) => {
+const _onConnect = (connection: Connection) => {
     const sourceNode = findNode(connection.source);
     const targetNode = findNode(connection.target);
-
     if (!sourceNode || !targetNode) {
         return;
     }
@@ -74,14 +73,12 @@ onConnect((connection: Connection) => {
         return;
     }
 
+    common.applyEffect(vueFlow, targetNode, sourceNode);
 
-    if (['plan', 'addon'].includes(targetNode.type)) {
-        console.log(getConnectedEdges(targetNode.id))
-    }
-
+    // if source node is parent node,
     addEdges(connection)
-})
-
+}
+onConnect(_onConnect)
 
 onNodeDragStop((drag) => {
     const node = drag.node;
@@ -186,20 +183,28 @@ onNodeDragStop((drag) => {
                     target: drag.node.id,
                 })
 
+                common.applyEffect(vueFlow, drag.node, sourceNode);
+
+
                 common.data.edges.push({
                     id: drag.node.id + '-' + targetNode.id,
                     source: drag.node.id,
                     target: targetNode.id,
                 })
 
+
                 // remove current edge
                 common.data.edges = common.data.edges.filter(({ id }) => id !== (sourceNode.id + '-' + targetNode.id));
-
                 break;
             }
         }
     }
 })
+
+onMounted(() => {
+
+})
+
 </script>
 
 <template>

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { Handle, Position, } from '@vue-flow/core'
+import { Handle, Position, useVueFlow, } from '@vue-flow/core'
 import { Braces } from 'lucide-vue-next';
-import { reactive, ref } from 'vue'
+import { reactive, onMounted, watch } from 'vue'
 import { NodeResizer } from '@vue-flow/node-resizer'
 import common from '@/lib/common';
 import {
@@ -12,12 +12,37 @@ import {
     NumberFieldInput,
 } from '@/components/ui/number-field'
 
-const props = defineProps(['data'])
+const props = defineProps(['data', 'id']);
+
+const vueFlow = useVueFlow();
 
 const data = reactive({
-    name: props.data.name,
-    amount: 1,
-    until: 1,
+    amount: props.data.amount ?? 1,
+    until: props.data.until ?? 1,
+})
+
+onMounted(() => {
+    vueFlow.updateNodeData(props.id, {
+        options: data
+    })
+
+    watch(data, (_) => {
+
+        const edges = common.data.edges.filter(({ target }) => target === props.id);
+
+        if (edges.length > 0) {
+            const node = vueFlow.findNode(props.id);
+            if (!node) return;
+            for (let edge of edges) {
+                const sourceNode = vueFlow.findNode(edge.source);
+                if (!sourceNode) continue;
+
+                // common.applyEffect(vueFlow, node, sourceNode, false)
+            }
+        }
+
+        console.log(vueFlow.getNodes.value)
+    })
 })
 
 console.log('mounted feature condition node')

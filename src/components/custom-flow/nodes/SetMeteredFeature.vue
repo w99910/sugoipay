@@ -1,12 +1,23 @@
 <script lang="ts" setup>
 import common from '@/lib/common';
-import { Handle, Position } from '@vue-flow/core'
+import { Handle, Position, useVueFlow } from '@vue-flow/core'
 import { Table } from 'lucide-vue-next';
-import { reactive } from 'vue'
+import { onMounted, reactive } from 'vue'
 // import Collisp
-const props = defineProps(['data'])
+const props = defineProps(['data', 'id'])
+
+const { updateNodeData } = useVueFlow();
 
 const data = reactive({
+})
+
+
+onMounted(() => {
+    updateNodeData(props.id, {
+        options: {
+            isMeteredFeature: true,
+        }
+    })
 })
 
 </script>

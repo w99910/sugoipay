@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { Handle, Position, } from '@vue-flow/core'
+import { Handle, Position, useVueFlow, } from '@vue-flow/core'
 import { CircleDivide } from 'lucide-vue-next';
-import { reactive, ref } from 'vue'
+import { onMounted, reactive, ref, watch, watchEffect } from 'vue'
 import common from '@/lib/common';
 import {
     NumberField,
@@ -20,12 +20,37 @@ import {
     SelectValue,
 } from '@/components/ui/select'
 
-const props = defineProps(['data'])
+const props = defineProps(['data', 'id'])
 
+const { updateNodeData, findNode, getNodes } = useVueFlow();
+const vuef = useVueFlow();
 const data = reactive({
-    name: props.data.name,
-    divideBy: 1,
-    round: 'up'
+    divideBy: props.data.divideBy ?? 1,
+    round: props.data.round ?? 'up'
+})
+
+onMounted(() => {
+    updateNodeData(props.id, {
+        options: data
+    })
+
+    watch(data, (_) => {
+
+        //     const edges = common.data.edges.filter(({ source, target }) => target === props.id);
+
+        //     if (edges.length > 0) {
+        //         const node = findNode(props.id);
+        //         if (!node) return;
+        //         for (let edge of edges) {
+        //             const sourceNode = findNode(edge.source);
+        //             if (!sourceNode) continue;
+
+        //             common.applyEffect(vuef, node, sourceNode, false)
+        //         }
+        //     }
+
+        console.log(getNodes.value)
+    })
 })
 
 console.log('mounted adjust node')
