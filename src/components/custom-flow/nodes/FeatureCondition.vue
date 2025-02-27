@@ -1,16 +1,23 @@
 <script lang="ts" setup>
 import { Handle, Position, } from '@vue-flow/core'
-import { Braces, ChevronDown } from 'lucide-vue-next';
+import { Braces } from 'lucide-vue-next';
 import { reactive, ref } from 'vue'
 import { NodeResizer } from '@vue-flow/node-resizer'
 import common from '@/lib/common';
-import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/components/ui/collapsible';
+import {
+    NumberField,
+    NumberFieldContent,
+    NumberFieldDecrement,
+    NumberFieldIncrement,
+    NumberFieldInput,
+} from '@/components/ui/number-field'
 
-// import Collisp
 const props = defineProps(['data'])
 
 const data = reactive({
     name: props.data.name,
+    amount: 1,
+    until: 1,
 })
 
 </script>
@@ -18,8 +25,8 @@ const data = reactive({
 <template>
     <div class="custom-node">
         <Handle type="source" :position="Position.Top" />
-        <NodeResizer class="rounded-lg" color="transparent" :min-width="common.node.minWidth"
-            :min-height="common.node.minHeight" />
+        <!-- <NodeResizer class="rounded-lg" color="transparent" :min-width="common.node.minWidth"
+            :min-height="common.node.minHeight" /> -->
         <div class="flex items-center gap-x-2 bg-gray-100 p-1.5">
             <div class="p-2 rounded bg-[#3753d1]">
                 <Braces :size="common.iconSize" color="white" />
@@ -28,31 +35,34 @@ const data = reactive({
 
         <div class="flex flex-col gap-y-2 p-2">
 
-            <Collapsible defaultOpen
-                class="group/collapsible text-sm text-gray-500 p-2 border rounded flex items-start flex-col">
-                <CollapsibleTrigger class="flex  justify-between items-center w-full">
-                    Billing Cycle
-                    <ChevronDown :size="common.iconSize"
-                        class="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
-                </CollapsibleTrigger>
-                <CollapsibleContent class="mt-2">
-                    <div>
-                        Hello world
-                    </div>
-                </CollapsibleContent>
-            </Collapsible>
-            <Collapsible class="group/collapsible text-sm text-gray-500 p-2 border rounded flex items-start flex-col">
-                <CollapsibleTrigger class="flex  justify-between items-center w-full">
-                    Pricing
-                    <ChevronDown :size="common.iconSize"
-                        class="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
-                </CollapsibleTrigger>
-                <CollapsibleContent class="mt-2">
-                    <div>
-                        Hello world
-                    </div>
-                </CollapsibleContent>
-            </Collapsible>
+            <div class="flex flex-col gap-2 p-2 items-start">
+                <div class="flex items-center gap-x-2">
+                    <span class="text-gray-600">Charge</span>
+                    <NumberField class="w-[200px] max-w-max nodrag" v-model="data.amount" id="balance" :step="0.001"
+                        :default-value="1" :format-options="{
+                            style: 'currency',
+                            currency: 'USD',
+                            currencyDisplay: 'code',
+                            currencySign: 'accounting',
+                            maximumFractionDigits: 3
+                        }">
+                        <NumberFieldContent>
+                            <NumberFieldDecrement />
+                            <NumberFieldInput />
+                            <NumberFieldIncrement />
+                        </NumberFieldContent>
+                    </NumberField>
+                </div>
+
+                <span class="text-gray-600">until amount reaches </span>
+                <NumberField class="nodrag" v-model="data.until" id="age" :default-value="10" :min="1">
+                    <NumberFieldContent>
+                        <NumberFieldDecrement />
+                        <NumberFieldInput />
+                        <NumberFieldIncrement />
+                    </NumberFieldContent>
+                </NumberField>
+            </div>
         </div>
         <Handle type="target" :position="Position.Bottom" />
     </div>

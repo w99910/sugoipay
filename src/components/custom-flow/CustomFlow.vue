@@ -13,10 +13,38 @@ import SetMeteredFeature from './nodes/SetMeteredFeature.vue'
 import DropzoneBackground from '@/components/custom-flow/DropzoneBackground.vue'
 import FeatureCondition from './nodes/FeatureCondition.vue'
 import common from '@/lib/common'
-
+import ConfirmationDialog from '../ui/alert-dialog/ConfirmationDialog.vue'
+import ChargeSpecificAmountAtEachCondition from './nodes/ChargeSpecificAmountAtEachCondition.vue'
+import ExplainNode from './nodes/ExplainNode.vue'
+import AdjustAmount from './nodes/AdjustAmount.vue'
+import LetCustomerSelectQuantity from './nodes/LetCustomerSelectQuantity.vue'
+import { Toaster } from '@/components/ui/sonner'
+import { toast } from 'vue-sonner'
 const { onDragOver, onDragLeave, isDragOver } = useDragAndDrop()
 
-const { onConnect, addEdges, onNodeDragStop, findEdge, findNode } = useVueFlow()
+const { onConnect, addEdges, onNodeDragStop, findEdge, findNode, onNodesChange, applyNodeChanges, onEdgesChange, applyEdgeChanges } = useVueFlow()
+
+onNodesChange(async (changes) => {
+    const nextChanges = []
+
+    for (const change of changes) {
+        if (change.type === 'remove') {
+            const isConfirmed = await common.confirm();
+            console.log(isConfirmed)
+            if (isConfirmed) {
+                nextChanges.push(change)
+            }
+        } else {
+            nextChanges.push(change)
+        }
+    }
+
+    applyNodeChanges(nextChanges)
+})
+
+onEdgesChange(async (changes) => {
+    applyEdgeChanges(changes)
+})
 
 
 const nodeTypes = {
@@ -25,7 +53,11 @@ const nodeTypes = {
     addon: markRaw(AddonNode),
     feature: markRaw(FeatureNode),
     setMeteredFeature: markRaw(SetMeteredFeature),
-    featureCondition: markRaw(FeatureCondition)
+    featureCondition: markRaw(FeatureCondition),
+    chargeSpecificAmountAtEachCondition: markRaw(ChargeSpecificAmountAtEachCondition),
+    explain: markRaw(ExplainNode),
+    adjustAmount: markRaw(AdjustAmount),
+    letCustomerSelectQuantity: markRaw(LetCustomerSelectQuantity)
 } as any
 
 
@@ -38,6 +70,7 @@ onConnect((connection: Connection) => {
     }
 
     if (!common.canConnect(sourceNode, targetNode)) {
+        toast.warning('Node is not allowed to connect.')
         return;
     }
     addEdges(connection)
@@ -164,14 +197,15 @@ onNodeDragStop((drag) => {
 </script>
 
 <template>
-    <VueFlow :connection-mode="ConnectionMode.Strict" :nodeTypes="nodeTypes" :nodes="common.data.nodes"
-        :edges="common.data.edges" @dragover="onDragOver" @dragleave="onDragLeave" fit-view-on-init :default-zoom="1.5"
-        :min-zoom="0.2" :max-zoom="4">
+    <VueFlow :apply-default="false" :connection-mode="ConnectionMode.Strict" :nodeTypes="nodeTypes"
+        :nodes="common.data.nodes" :edges="common.data.edges" @dragover="onDragOver" @dragleave="onDragLeave"
+        fit-view-on-init :default-zoom="1.5" :min-zoom="0.2" :max-zoom="4">
         <MiniMap />
         <Panel position="top-left" class="flex items-center gap-x-4">
             <slot name="panel"></slot>
         </Panel>
         <Controls />
+        <ConfirmationDialog />
         <DropzoneBackground :style="{
             backgroundColor: isDragOver ? '#e7f3ff' : 'transparent',
             transition: 'background-color 0.2s ease',

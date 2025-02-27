@@ -5,7 +5,7 @@ import { MiniMap } from '@vue-flow/minimap'
 import { VueFlow, useVueFlow, Panel } from '@vue-flow/core'
 import AppSidebar from './components/AppSidebar.vue'
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-
+import { Toaster } from './components/ui/sonner'
 import DropzoneBackground from './components/custom-flow/DropzoneBackground.vue'
 import {
   Menubar,
@@ -187,6 +187,7 @@ onPaneContextMenu((e) => {
           </Menubar>
         </template>
       </CustomFlow>
+      <Toaster />
     </main>
   </SidebarProvider>
 </template>
