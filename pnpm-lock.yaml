@@ -47,6 +47,9 @@ importers:
       vue:
         specifier: ^3.5.13
         version: 3.5.13(typescript@5.7.3)
+      vue-sonner:
+        specifier: ^1.3.0
+        version: 1.3.0
     devDependencies:
       '@types/node':
         specifier: ^22.13.5
@@ -1176,6 +1179,9 @@ packages:
       '@vue/composition-api':
         optional: true
 
+  vue-sonner@1.3.0:
+    resolution: {integrity: sha512-jAodBy4Mri8rQjVZGQAPs4ZYymc1ywPiwfa81qU0fFl+Suk7U8NaOxIDdI1oBGLeQJqRZi/oxNIuhCLqsBmOwg==}
+
   vue-tsc@2.2.4:
     resolution: {integrity: sha512-3EVHlxtpMXcb5bCaK7QDFTbEkMusDfVk0HVRrkv5hEb+Clpu9a96lKUXJAeD/akRlkoA4H8MCHgBDN19S6FnzA==}
     hasBin: true
@@ -2211,6 +2217,8 @@ snapshots:
   vue-demi@0.14.10(vue@3.5.13(typescript@5.7.3)):
     dependencies:
       vue: 3.5.13(typescript@5.7.3)
+
+  vue-sonner@1.3.0: {}
 
   vue-tsc@2.2.4(typescript@5.7.3):
     dependencies:

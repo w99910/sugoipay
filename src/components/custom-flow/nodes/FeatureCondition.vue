@@ -20,6 +20,9 @@ const data = reactive({
     until: 1,
 })
 
+console.log('mounted feature condition node')
+
+
 </script>
 
 <template>
@@ -30,7 +33,7 @@ const data = reactive({
         <div class="flex items-center gap-x-2 bg-gray-100 p-1.5">
             <div class="p-2 rounded bg-[#3753d1]">
                 <Braces :size="common.iconSize" color="white" />
-            </div> <span class="text-[#3753d1] font-semibold text-sm">Feature Condition</span>
+            </div> <span class="text-[#3753d1] font-semibold text-sm">Feature Billing Condition</span>
         </div>
 
         <div class="flex flex-col gap-y-2 p-2">
@@ -38,7 +41,7 @@ const data = reactive({
             <div class="flex flex-col gap-2 p-2 items-start">
                 <div class="flex items-center gap-x-2">
                     <span class="text-gray-600">Charge</span>
-                    <NumberField class="w-[200px] max-w-max nodrag" v-model="data.amount" id="balance" :step="0.001"
+                    <NumberField class="w-[200px] max-w-max nodrag" v-model="data.amount" :step="0.001"
                         :default-value="1" :format-options="{
                             style: 'currency',
                             currency: 'USD',

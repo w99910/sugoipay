@@ -9,6 +9,9 @@ const props = defineProps(['data'])
 const data = reactive({
 })
 
+console.log('mounted explain node')
+
+
 </script>
 
 <template>

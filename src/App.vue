@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { ref, type Ref, onMounted, markRaw } from 'vue'
-import { Controls } from '@vue-flow/controls'
-import { MiniMap } from '@vue-flow/minimap'
-import { VueFlow, useVueFlow, Panel } from '@vue-flow/core'
+import { ref, type Ref, } from 'vue'
+import { useVueFlow, } from '@vue-flow/core'
 import AppSidebar from './components/AppSidebar.vue'
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Toaster } from './components/ui/sonner'
+import { Moon, Info } from 'lucide-vue-next';
 import DropzoneBackground from './components/custom-flow/DropzoneBackground.vue'
+import { useColorMode } from '@vueuse/core'
+
 import {
   Menubar,
   MenubarContent,
@@ -36,6 +37,8 @@ import {
   ContextMenuTrigger,
 } from '@/components/ui/context-menu'
 import CustomFlow from './components/custom-flow/CustomFlow.vue'
+import common from './lib/common'
+import Button from './components/ui/button/Button.vue';
 
 const { onConnect, addEdges, addNodes, onNodeDragStop, getEdges, onNodeDragStart, onPaneContextMenu } = useVueFlow()
 
@@ -77,6 +80,7 @@ onPaneContextMenu((e) => {
   onPaneContext(e);
 })
 
+const mode = useColorMode()
 </script>
 
 <template>
@@ -138,7 +142,17 @@ onPaneContextMenu((e) => {
         </ContextMenuContent>
       </ContextMenu>
       <CustomFlow>
-        <template #panel>
+        <template #panel-right>
+          <div class="flex items-center gap-x-2 p-0.5 bg-background border rounded-lg">
+            <Button :variant="'ghost'" @click="mode = mode === 'light' ? 'dark' : 'light'">
+              <Moon :size="common.iconSize" />
+            </Button>
+            <Button :variant="'ghost'">
+              <Info :size="common.iconSize" />
+            </Button>
+          </div>
+        </template>
+        <template #panel-left>
           <SidebarTrigger />
           <Menubar>
             <MenubarMenu>

@@ -42,7 +42,7 @@ export default {
         id: "3",
         type: "addon",
         data: { name: "Addon A" },
-        position: { x: 450, y: 100 },
+        position: { x: 500, y: 100 },
       },
       {
         id: "4",
@@ -54,7 +54,7 @@ export default {
         id: "5",
         type: "feature",
         data: { name: "Feature B" },
-        position: { x: 450, y: 350 },
+        position: { x: 500, y: 350 },
       },
       {
         id: "6",
@@ -171,8 +171,8 @@ export default {
       from: ["plan", "addon"],
     },
     adjustAmount: {
-      to: ["plan", "addon", "letCustomerSelectQuantity"],
-      from: ["feature", "letCustomerSelectQuantity"],
+      to: ["plan", "addon", "letCustomerSelectQuantity", "setMeteredFeature"],
+      from: ["feature", "letCustomerSelectQuantity", "setMeteredFeature"],
     },
     letCustomerSelectQuantity: {
       to: ["setMeteredFeature", "plan", "addon", "adjustAmount"],

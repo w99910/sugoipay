@@ -2,7 +2,6 @@
 import { Handle, Position, } from '@vue-flow/core'
 import { Shield } from 'lucide-vue-next';
 import { reactive, ref } from 'vue'
-import { NodeResizer } from '@vue-flow/node-resizer'
 import common from '@/lib/common';
 const props = defineProps(['data'])
 import {
@@ -19,6 +18,8 @@ const data = reactive({
     type: 'ability'
 })
 
+console.log('mounted feature node')
+
 </script>
 
 <template>
@@ -34,10 +35,10 @@ const data = reactive({
         <div class="p-3 flex items-center gap-y-2 flex-col h-full">
             <div class="w-full flex items-center gap-x-2 justify-between px-2">
                 <button @click="data.type = 'ability'"
-                    :class="{ 'bg-gray-600 p-1.5 text-gray-100': data.type === 'ability' }"
+                    :class="{ 'bg-gray-700 p-1.5 text-gray-100': data.type === 'ability' }"
                     class="rounded w-full py-1.5 border">Ability</button>
                 <button @click="data.type = 'usage'"
-                    :class="{ 'bg-gray-600 p-1.5  text-gray-100': data.type === 'usage' }"
+                    :class="{ 'bg-gray-700 p-1.5  text-gray-100': data.type === 'usage' }"
                     class="rounded w-full py-1.5 border">Usage</button>
             </div>
             <div v-show="data.type === 'usage'" class="flex items-center gap-x-2 mt-2">

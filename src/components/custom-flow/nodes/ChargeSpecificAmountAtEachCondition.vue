@@ -3,12 +3,14 @@ import common from '@/lib/common';
 import { Handle, Position } from '@vue-flow/core'
 import { BadgeCent } from 'lucide-vue-next';
 import { reactive } from 'vue'
-import { NodeResizer } from '@vue-flow/node-resizer';
 // import Collisp
 const props = defineProps(['data'])
 
 const data = reactive({
 })
+
+console.log('mounted charge specific amount node')
+
 
 </script>
 

@@ -11,12 +11,14 @@ const data = reactive({
     name: props.data.name
 })
 
+console.log('mounted product node')
+
 </script>
 
 <template>
     <div class="custom-node">
-        <NodeResizer class="rounded-lg" color="transparent" :min-width="common.node.minWidth"
-            :min-height="common.node.minHeight" />
+        <!-- <NodeResizer class="rounded-lg" color="transparent" :min-width="common.node.minWidth"
+            :min-height="common.node.minHeight" /> -->
         <div class="flex items-center gap-x-2 bg-gray-100 p-1.5">
             <div class="p-2 rounded bg-purple-500">
                 <LayoutGrid :size="common.iconSize" color="white" />

@@ -28,6 +28,9 @@ const data = reactive({
     round: 'up'
 })
 
+console.log('mounted adjust node')
+
+
 </script>
 
 <template>

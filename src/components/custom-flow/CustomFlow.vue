@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { ref, markRaw } from 'vue'
-
 import useDragAndDrop from '@/useDnD'
 import { Controls } from '@vue-flow/controls'
 import { MiniMap } from '@vue-flow/minimap'
-import { VueFlow, useVueFlow, Panel, ConnectionMode, type Connection } from '@vue-flow/core'
+import { VueFlow, useVueFlow, Panel, ConnectionMode, type Connection, getIncomers } from '@vue-flow/core'
 import ProductNode from '@/components/custom-flow/nodes/ProductNode.vue'
 import PlanNode from '@/components/custom-flow/nodes/PlanNode.vue'
 import FeatureNode from '@/components/custom-flow/nodes/FeatureNode.vue'
@@ -18,11 +17,10 @@ import ChargeSpecificAmountAtEachCondition from './nodes/ChargeSpecificAmountAtE
 import ExplainNode from './nodes/ExplainNode.vue'
 import AdjustAmount from './nodes/AdjustAmount.vue'
 import LetCustomerSelectQuantity from './nodes/LetCustomerSelectQuantity.vue'
-import { Toaster } from '@/components/ui/sonner'
 import { toast } from 'vue-sonner'
 const { onDragOver, onDragLeave, isDragOver } = useDragAndDrop()
 
-const { onConnect, addEdges, onNodeDragStop, findEdge, findNode, onNodesChange, applyNodeChanges, onEdgesChange, applyEdgeChanges } = useVueFlow()
+const { onConnect, addEdges, onNodeDragStop, findEdge, findNode, onNodesChange, applyNodeChanges, onEdgesChange, applyEdgeChanges, getConnectedEdges } = useVueFlow()
 
 onNodesChange(async (changes) => {
     const nextChanges = []
@@ -43,6 +41,8 @@ onNodesChange(async (changes) => {
 })
 
 onEdgesChange(async (changes) => {
+    console.log(changes)
+
     applyEdgeChanges(changes)
 })
 
@@ -73,6 +73,12 @@ onConnect((connection: Connection) => {
         toast.warning('Node is not allowed to connect.')
         return;
     }
+
+
+    if (['plan', 'addon'].includes(targetNode.type)) {
+        console.log(getConnectedEdges(targetNode.id))
+    }
+
     addEdges(connection)
 })
 
@@ -202,7 +208,11 @@ onNodeDragStop((drag) => {
         fit-view-on-init :default-zoom="1.5" :min-zoom="0.2" :max-zoom="4">
         <MiniMap />
         <Panel position="top-left" class="flex items-center gap-x-4">
-            <slot name="panel"></slot>
+            <slot name="panel-left"></slot>
+        </Panel>
+        <Panel position="top-right" class="flex items-center gap-x-4">
+            <slot name="panel-right"></slot>
+
         </Panel>
         <Controls />
         <ConfirmationDialog />
