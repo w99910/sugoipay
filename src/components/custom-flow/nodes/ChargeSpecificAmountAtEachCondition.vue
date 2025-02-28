@@ -4,7 +4,7 @@ import { Handle, Position } from '@vue-flow/core'
 import { BadgeCent } from 'lucide-vue-next';
 import { reactive } from 'vue'
 // import Collisp
-const props = defineProps(['data'])
+const props = defineProps(['data', 'id'])
 
 const data = reactive({
 })
@@ -16,6 +16,7 @@ console.log('mounted charge specific amount node')
 
 <template>
     <div class="custom-node">
+        <span>{{ id }}</span>
         <!-- <NodeResizer class="rounded-lg" color="transparent" :min-width="common.node.minWidth"
             :min-height="common.node.minHeight" /> -->
         <Handle type="source" :position="Position.Top" />

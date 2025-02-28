@@ -60,6 +60,7 @@ console.log('mounted adjust node')
 
 <template>
     <div class="custom-node">
+        <span>{{ id }}</span>
         <Handle type="source" :position="Position.Top" />
         <!-- <NodeResizer class="rounded-lg" color="transparent" :min-width="common.node.minWidth"
             :min-height="common.node.minHeight" /> -->

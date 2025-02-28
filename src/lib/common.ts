@@ -1,5 +1,5 @@
 import { type GraphNode, type VueFlowStore } from "@vue-flow/core";
-import { reactive, watch } from "vue";
+import { h, reactive, watch } from "vue";
 
 export default {
   node: {
@@ -29,12 +29,14 @@ export default {
       {
         id: "1",
         type: "product",
-        data: { name: "Product A" },
+
+        data: { name: "Product A", label: h("div", "Product A") },
         position: { x: 250, y: 5 },
       },
       {
         id: "2",
         type: "plan",
+        label: "2",
         data: { name: "Plan A" },
         position: { x: 0, y: 100 },
       },
@@ -48,7 +50,7 @@ export default {
         id: "4",
         type: "feature",
         data: { name: "Feature A" },
-        position: { x: 0, y: 780 },
+        position: { x: 0, y: 900 },
       },
       {
         id: "5",
@@ -60,7 +62,7 @@ export default {
         id: "6",
         type: "setMeteredFeature",
         data: { name: "Feature B" },
-        position: { x: 200, y: 450 },
+        position: { x: 200, y: 800 },
       },
       {
         id: "7",
@@ -70,7 +72,7 @@ export default {
       {
         id: "8",
         type: "chargeSpecificAmountAtEachCondition",
-        position: { x: 650, y: 580 },
+        position: { x: -320, y: 0 },
       },
       {
         id: "9",
@@ -85,7 +87,7 @@ export default {
       {
         id: "11",
         type: "adjustAmount",
-        position: { x: 200, y: 550 },
+        position: { x: 0, y: 550 },
       },
       {
         id: "12",
@@ -95,10 +97,11 @@ export default {
       },
     ],
     edges: [
-      { id: "2-1", target: "1", source: "2" },
-      { id: "3-1", target: "1", source: "3" },
-      { id: "4-2", target: "2", source: "4" },
-      { id: "5-3", target: "3", source: "5" },
+      // { id: "2-1", target: "1", source: "2" },
+      // { id: "3-1", target: "1", source: "3" },
+      { id: "4-11", target: "11", source: "4" },
+      { id: "11-2", target: "2", source: "11" },
+      // { id: "5-3", target: "3", source: "5" },
       { id: "7-12", target: "12", source: "7" },
     ],
   }),

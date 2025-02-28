@@ -5,10 +5,10 @@ import { reactive, ref } from 'vue'
 import { NodeResizer } from '@vue-flow/node-resizer'
 import common from '@/lib/common';
 
-const props = defineProps(['data', 'type', 'name'])
+const props = defineProps(['data', 'type', 'label', 'id'])
 
 const data = reactive({
-    name: props.name
+    name: props.data.name
 })
 
 console.log('mounted product node')
@@ -19,6 +19,7 @@ console.log('mounted product node')
     <div class="custom-node">
         <!-- <NodeResizer class="rounded-lg" color="transparent" :min-width="common.node.minWidth"
             :min-height="common.node.minHeight" /> -->
+        <span>{{ id }}</span>
         <div class="flex items-center gap-x-2 bg-gray-100 p-1.5">
             <div class="p-2 rounded bg-purple-500">
                 <LayoutGrid :size="common.iconSize" color="white" />

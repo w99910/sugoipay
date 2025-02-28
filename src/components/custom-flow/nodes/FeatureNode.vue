@@ -4,7 +4,7 @@ import { Shield } from 'lucide-vue-next';
 import { reactive, ref } from 'vue'
 import common from '@/lib/common';
 import { Textarea } from '@/components/ui/textarea'
-const props = defineProps(['data'])
+const props = defineProps(['data', 'id'])
 import {
     NumberField,
     NumberFieldContent,
@@ -26,6 +26,7 @@ console.log('mounted feature node')
 
 <template>
     <div class="custom-node">
+        <span>{{ id }}</span>
         <!-- <NodeResizer class="rounded-lg" color="transparent" :min-width="common.node.minWidth"
             :min-height="common.node.minHeight" /> -->
         <div class="flex items-center gap-x-2 bg-gray-100 p-1.5">

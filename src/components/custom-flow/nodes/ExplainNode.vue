@@ -4,7 +4,7 @@ import { Handle, Position } from '@vue-flow/core'
 import { Text } from 'lucide-vue-next';
 import { reactive } from 'vue'
 // import Collisp
-const props = defineProps(['data'])
+const props = defineProps(['data', 'id'])
 
 const data = reactive({
 })
@@ -16,6 +16,7 @@ console.log('mounted explain node')
 
 <template>
     <div class="custom-node">
+        <span>{{ id }}</span>
         <div class="flex items-center gap-x-2 bg-gray-100 p-1.5">
             <div class="p-2 rounded bg-[#f79d65]">
                 <Text :size="common.iconSize" color="white" />

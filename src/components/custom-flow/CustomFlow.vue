@@ -3,7 +3,7 @@ import { markRaw, onMounted, watch } from 'vue'
 import useDragAndDrop from '@/useDnD'
 import { Controls } from '@vue-flow/controls'
 import { MiniMap } from '@vue-flow/minimap'
-import { VueFlow, useVueFlow, Panel, ConnectionMode, type Connection, useNodesData } from '@vue-flow/core'
+import { VueFlow, useVueFlow, Panel, ConnectionMode, type Connection, useNodesData, type NodeChange } from '@vue-flow/core'
 import ProductNode from '@/components/custom-flow/nodes/ProductNode.vue'
 import PlanNode from '@/components/custom-flow/nodes/PlanNode.vue'
 import FeatureNode from '@/components/custom-flow/nodes/FeatureNode.vue'
@@ -18,20 +18,20 @@ import ExplainNode from './nodes/ExplainNode.vue'
 import AdjustAmount from './nodes/AdjustAmount.vue'
 import LetCustomerSelectQuantity from './nodes/LetCustomerSelectQuantity.vue'
 import { toast } from 'vue-sonner'
+import Tree from '@/lib/tree'
 const { onDragOver, onDragLeave, isDragOver } = useDragAndDrop()
 
 const vueFlow = useVueFlow();
 const { onConnect, addEdges, onNodeDragStop, findEdge, findNode, onNodesChange, applyNodeChanges, onEdgesChange, applyEdgeChanges, } = vueFlow;
 
-onNodesChange(async (changes) => {
-    // console.log(changes)
+let tree: Tree;
+onNodesChange(async (changes: any) => {
     const nextChanges = []
 
     for (const change of changes) {
         // console.log(change.type)
         if (change.type === 'remove') {
             const isConfirmed = await common.confirm();
-            console.log(isConfirmed)
             if (isConfirmed) {
                 nextChanges.push(change)
             }
@@ -43,7 +43,19 @@ onNodesChange(async (changes) => {
     applyNodeChanges(nextChanges)
 })
 
-onEdgesChange(async (changes) => {
+onEdgesChange(async (changes: any) => {
+
+    for (const change of changes) {
+        if (change.type === 'add') {
+            // console.log(tree, change.item.target, change.item.source)
+            tree.addEdge(change.item.target, change.item.source)
+        }
+
+        if (change.type === 'remove') {
+            // console.log(change.target, change.source)
+            tree.removeEdge(change.target, change.source)
+        }
+    }
     applyEdgeChanges(changes)
 })
 
@@ -73,7 +85,7 @@ const _onConnect = (connection: Connection) => {
         return;
     }
 
-    common.applyEffect(vueFlow, targetNode, sourceNode);
+    // common.applyEffect(vueFlow, targetNode, sourceNode);
 
     // if source node is parent node,
     addEdges(connection)
@@ -177,24 +189,23 @@ onNodeDragStop((drag) => {
                     continue;
                 }
 
-                common.data.edges.push({
+                tree.disable = true;
+
+                vueFlow.addEdges({
                     id: sourceNode.id + '-' + drag.node.id,
                     source: sourceNode.id,
-                    target: drag.node.id,
+                    target: drag.node.id
                 })
 
-                common.applyEffect(vueFlow, drag.node, sourceNode);
-
-
-                common.data.edges.push({
+                vueFlow.addEdges({
                     id: drag.node.id + '-' + targetNode.id,
                     source: drag.node.id,
                     target: targetNode.id,
                 })
 
-
-                // remove current edge
-                common.data.edges = common.data.edges.filter(({ id }) => id !== (sourceNode.id + '-' + targetNode.id));
+                vueFlow.removeEdges(sourceNode.id + '-' + targetNode.id)
+                tree.disable = false;
+                tree.addEdgeBetween(drag.node.id, targetNode.id, sourceNode.id)
                 break;
             }
         }
@@ -202,7 +213,23 @@ onNodeDragStop((drag) => {
 })
 
 onMounted(() => {
+    tree = new Tree(vueFlow);
 
+    tree.onApply((effectedNode, sourceNode) => {
+        // const _effectedNode = vueFlow.findNode(effectedNode);
+        // const _sourceNode = vueFlow.findNode(sourceNode);
+        // console.log('onapply', _effectedNode, _sourceNode)
+    })
+
+    tree.onRemove((effectedNode, sourceNode) => {
+        // const _effectedNode = vueFlow.findNode(effectedNode);
+        // const _sourceNode = vueFlow.findNode(sourceNode);
+        // console.log('onremove', effectedNode, sourceNode, _effectedNode, _sourceNode)
+    })
+
+    setTimeout(() => {
+        console.clear();
+    }, 1000)
 })
 
 </script>

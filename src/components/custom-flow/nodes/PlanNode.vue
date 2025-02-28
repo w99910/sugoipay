@@ -22,7 +22,7 @@ import {
 } from '@/components/ui/number-field'
 
 // import Collisp
-const props = defineProps(['data'])
+const props = defineProps(['data', 'id'])
 
 const data = reactive({
     isFocus: false,
@@ -39,6 +39,7 @@ console.log('mounted plan node')
 
 <template>
     <div class="custom-node">
+        <span>{{ id }}</span>
         <Handle type="source" :position="Position.Top" />
         <!-- <NodeResizer class="rounded-lg" color="transparent" :min-width="common.node.minWidth"
             :min-height="common.node.minHeight" /> -->

@@ -24,6 +24,7 @@ onMounted(() => {
 
 <template>
     <div class="custom-node">
+        <span>{{ id }}</span>
         <Handle type="source" :position="Position.Top" />
         <div class="flex items-center gap-x-2 bg-gray-100 p-1.5">
             <div class="p-2 rounded bg-[#3753d1]">
