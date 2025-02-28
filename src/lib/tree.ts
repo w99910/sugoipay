@@ -51,10 +51,8 @@ export default class Tree {
       }
 
       const sourceLinks = this.links.filter((link) => link.includes(source));
-      console.log({
-        toDeleteLink,
-      });
       const bottomLinks = [];
+      const currentTopNodesOfSource = sourceLinks.map((link) => link[0]);
       if (sourceLinks.length > 0) {
         for (let link of sourceLinks) {
           const sourceIndex = link.indexOf(source);
@@ -87,6 +85,10 @@ export default class Tree {
             }
 
             this._onApply(topLink[0], lastNode);
+
+            for (const topNode of currentTopNodesOfSource) {
+              this._onApply(topNode, lastNode);
+            }
           }
         }
       }

@@ -219,15 +219,15 @@ onMounted(() => {
     tree = new Tree(vueFlow);
 
     tree.onApply((effectedNode, sourceNode) => {
-        // const _effectedNode = vueFlow.findNode(effectedNode);
-        // const _sourceNode = vueFlow.findNode(sourceNode);
-        // console.log('onapply', _effectedNode, _sourceNode)
+        const _effectedNode = vueFlow.findNode(effectedNode);
+        const _sourceNode = vueFlow.findNode(sourceNode);
+        console.log('onapply', _effectedNode, _sourceNode)
     })
 
     tree.onRemove((effectedNode, sourceNode) => {
-        // const _effectedNode = vueFlow.findNode(effectedNode);
-        // const _sourceNode = vueFlow.findNode(sourceNode);
-        // console.log('onremove', effectedNode, sourceNode, _effectedNode, _sourceNode)
+        const _effectedNode = vueFlow.findNode(effectedNode);
+        const _sourceNode = vueFlow.findNode(sourceNode);
+        console.log('onremove', effectedNode, sourceNode, _effectedNode, _sourceNode)
     })
 
     setTimeout(() => {
