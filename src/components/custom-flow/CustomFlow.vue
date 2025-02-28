@@ -191,6 +191,8 @@ onNodeDragStop((drag) => {
 
                 tree.disable = true;
 
+                vueFlow.removeEdges(vueFlow.edges.value.filter((edge) => edge.source === sourceNode.id && edge.target === targetNode.id))
+
                 vueFlow.addEdges({
                     id: sourceNode.id + '-' + drag.node.id,
                     source: sourceNode.id,
@@ -203,7 +205,8 @@ onNodeDragStop((drag) => {
                     target: targetNode.id,
                 })
 
-                vueFlow.removeEdges(sourceNode.id + '-' + targetNode.id)
+                console.log(sourceNode.id + '-' + drag.node.id, drag.node.id + '-' + targetNode.id, sourceNode.id + '-' + targetNode.id, vueFlow.edges.value)
+
                 tree.disable = false;
                 tree.addEdgeBetween(drag.node.id, targetNode.id, sourceNode.id)
                 break;
@@ -228,7 +231,7 @@ onMounted(() => {
     })
 
     setTimeout(() => {
-        console.clear();
+        // console.clear();
     }, 1000)
 })
 

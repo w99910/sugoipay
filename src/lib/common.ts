@@ -62,7 +62,7 @@ export default {
         id: "6",
         type: "setMeteredFeature",
         data: { name: "Feature B" },
-        position: { x: 200, y: 800 },
+        position: { x: -150, y: 800 },
       },
       {
         id: "7",
@@ -99,8 +99,10 @@ export default {
     edges: [
       // { id: "2-1", target: "1", source: "2" },
       // { id: "3-1", target: "1", source: "3" },
-      { id: "4-11", target: "11", source: "4" },
-      { id: "11-2", target: "2", source: "11" },
+      // { id: "4-11", target: "11", source: "4" },
+      { id: "4-6", target: "6", source: "4" },
+      // { id: "11-2", target: "2", source: "11" },
+      { id: "6-11", target: "11", source: "6" },
       // { id: "5-3", target: "3", source: "5" },
       { id: "7-12", target: "12", source: "7" },
     ],

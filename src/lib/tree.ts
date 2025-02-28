@@ -4,7 +4,7 @@ type onNodeUpdateFn = (effectedNode: string, sourceNode: string) => void;
 
 export default class Tree {
   public links: Array<Array<string>> = [];
-  public nodeLinkIndexes: { [key: string]: Array<number> } = {};
+  // public nodeLinkIndexes: { [key: string]: Array<number> } = {};
   protected _onApply: null | onNodeUpdateFn = null;
   protected _onRemove: null | onNodeUpdateFn = null;
   protected edges: Array<GraphEdge>;
@@ -28,16 +28,16 @@ export default class Tree {
   addEdge(target: string, source: string) {
     if (this.disable) return;
     try {
-      const targetLinkIndexes = this.nodeLinkIndexes[target];
+      // const targetLinkIndexes = this.nodeLinkIndexes[target];
+      const targetLinks = this.links.filter((link) => link.includes(target));
       const topLinks = [];
-      const linkWithTargetAsBottom = [];
-      if (targetLinkIndexes?.length > 0) {
-        for (let linkIndex of targetLinkIndexes) {
-          const link = this.links[linkIndex];
+      const toDeleteLink = [];
+      if (targetLinks.length > 0) {
+        for (let link of targetLinks) {
           const targetIndex = link.indexOf(target);
           if (targetIndex === link.length - 1) {
             topLinks.push(link);
-            linkWithTargetAsBottom[linkIndex] = link;
+            toDeleteLink.push(link);
             // this.links.splice(linkIndex, 1);
           } else {
             const upwardNodes = link.slice(0, link.indexOf(target));
@@ -50,27 +50,20 @@ export default class Tree {
         topLinks.push([target]);
       }
 
-      const sourceLinkIndexes = this.nodeLinkIndexes[source];
+      const sourceLinks = this.links.filter((link) => link.includes(source));
       console.log({
-        source,
-        sourceLinkIndexes,
-        links: Array.from(this.links),
-        topLinks: Array.from(topLinks),
-        target,
-        targetLinkIndexes,
+        toDeleteLink,
       });
       const bottomLinks = [];
-      const linksWithSourceAsTop = [];
-      if (sourceLinkIndexes?.length > 0) {
-        for (let linkIndex of sourceLinkIndexes) {
-          const link = this.links[linkIndex];
+      if (sourceLinks.length > 0) {
+        for (let link of sourceLinks) {
           const sourceIndex = link.indexOf(source);
 
           const downwardNodes = link.slice(sourceIndex, link.length);
           bottomLinks.push(downwardNodes);
 
           if (sourceIndex === 0) {
-            linksWithSourceAsTop[linkIndex] = downwardNodes;
+            toDeleteLink.push(link);
           }
         }
       } else {
@@ -84,26 +77,6 @@ export default class Tree {
           const newLink = [...topLink, ...bottomLink];
           this.links.push(newLink);
 
-          const newLinkIndex = this.links.length - 1;
-
-          const originalLinkIndexToRemove = linksWithSourceAsTop.includes(
-            bottomLink
-          )
-            ? linksWithSourceAsTop.indexOf(bottomLink)
-            : null;
-
-          for (let node of newLink) {
-            if (originalLinkIndexToRemove) {
-              // remove original link index
-              this.nodeLinkIndexes[node]?.splice(originalLinkIndexToRemove, 1);
-            }
-            if (!this.nodeLinkIndexes[node]) {
-              this.nodeLinkIndexes[node] = [newLinkIndex];
-            } else {
-              this.nodeLinkIndexes[node].push(newLinkIndex);
-            }
-          }
-
           if (this._onApply) {
             const lastNode = bottomLink[bottomLink.length - 1];
 
@@ -115,20 +88,16 @@ export default class Tree {
 
             this._onApply(topLink[0], lastNode);
           }
-
-          if (originalLinkIndexToRemove) {
-            this.links.splice(originalLinkIndexToRemove, 1);
-          }
-        }
-
-        if (linkWithTargetAsBottom.includes(topLink)) {
-          this.links.splice(this.links.indexOf(topLink), 1);
         }
       }
 
-      console.log(this);
+      for (const link of toDeleteLink) {
+        this.links.splice(this.links.indexOf(link), 1);
+      }
+
+      console.log(this.links);
     } catch (e) {
-      console.log(e, this.links, this.nodeLinkIndexes, { target, source });
+      console.log(e, this.links, { target, source });
     }
   }
 
@@ -159,7 +128,6 @@ export default class Tree {
     // if upper nodes has more than one
     if (upwardNodes.length > 1) {
       this.links.push(upwardNodes);
-      const upwardLinkIndex = this.links.length - 1;
       const firstNode = upwardNodes[0];
 
       if (this._onApply) {
@@ -174,27 +142,16 @@ export default class Tree {
         if (this._onRemove) {
           this._onRemove(lastNode, node);
         }
-
-        // since link is removed, remove its index from existing node link list.
-        this.nodeLinkIndexes[node] = this.nodeLinkIndexes[node].filter(
-          (i) => i !== linkIndex
-        );
-
-        // then add new link index to node link.
-        this.nodeLinkIndexes[node].push(upwardLinkIndex);
       }
     } else {
       // call remove listener for the first node and last node
       if (this._onRemove) {
         this._onRemove(upwardNodes[0], lastNode);
       }
-      // remove if there is only one node in a link
-      this.nodeLinkIndexes[upwardNodes[0]] = [];
     }
 
     if (downwardNodes.length > 1) {
       this.links.push(downwardNodes);
-      const downwardLinkIndex = this.links.length - 1;
 
       // the first node of downward link will act as final target
       // if (this._onApply) {
@@ -202,21 +159,15 @@ export default class Tree {
       // }
 
       for (const node of downwardNodes) {
-        this.nodeLinkIndexes[node] = this.nodeLinkIndexes[node].filter(
-          (i) => i !== linkIndex
-        );
-        this.nodeLinkIndexes[node].push(downwardLinkIndex);
       }
     } else {
       // prevent calling listener twice if there is only one node in each link
       if (this._onRemove && upwardNodes.length !== downwardNodes.length) {
         this._onRemove(upwardNodes[0], lastNode);
       }
-
-      this.nodeLinkIndexes[downwardNodes[0]] = [];
     }
 
-    console.log(this);
+    console.log(this.links);
   }
 
   addEdgeBetween(current: string, target: string, source: string) {
@@ -225,10 +176,6 @@ export default class Tree {
     );
 
     const link = links[0];
-
-    const linkIndex = this.links.indexOf(link);
-
-    this.nodeLinkIndexes[current] = [linkIndex];
 
     link.splice(link.indexOf(target) + 1, 0, current);
 
@@ -243,7 +190,7 @@ export default class Tree {
       }
     }
 
-    console.log(this);
+    console.log(this.links);
   }
 
   traverseDownward(target: string, currentLinkIndex: null | number = null) {
@@ -251,10 +198,6 @@ export default class Tree {
 
     if (currentLinkIndex === null) {
       currentLinkIndex = this.links.length;
-    }
-
-    if (!this.nodeLinkIndexes[target]) {
-      this.nodeLinkIndexes[target] = [currentLinkIndex];
     }
 
     for (let i = 0; i < edges.length; i++) {
@@ -271,12 +214,6 @@ export default class Tree {
         }
 
         this.links[currentLinkIndex] = _links;
-
-        for (let tnode of _links) {
-          if (!this.nodeLinkIndexes[tnode].includes(currentLinkIndex)) {
-            this.nodeLinkIndexes[tnode].push(currentLinkIndex);
-          }
-        }
       }
 
       this.links[currentLinkIndex].push(edges[i].source);
@@ -304,6 +241,6 @@ export default class Tree {
       this.traverseDownward(topEdge);
     }
 
-    console.log(this.links, this.nodeLinkIndexes);
+    console.log(this.links);
   }
 }
