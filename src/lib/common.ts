@@ -77,7 +77,7 @@ export default {
       {
         id: "9",
         type: "letCustomerSelectQuantity",
-        position: { x: 700, y: 500 },
+        position: { x: 500, y: 600 },
       },
       {
         id: "10",

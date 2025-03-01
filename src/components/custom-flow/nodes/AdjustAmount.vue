@@ -74,22 +74,22 @@ console.log('mounted adjust node')
 
             <div class="flex flex-col gap-y-4 p-2 items-start">
                 <div class="flex items-center gap-x-2">
-                    <span class="text-gray-600">Divide by </span>
+                    <span class="label-text">Divide by </span>
                     <NumberField class="nodrag w-[200px] max-w-max" v-model="data.divideBy" id="divisor"
                         :default-value="10" :min="1">
                         <NumberFieldContent>
                             <NumberFieldDecrement />
-                            <NumberFieldInput />
+                            <NumberFieldInput class="label-input" />
                             <NumberFieldIncrement />
                         </NumberFieldContent>
                     </NumberField>
                 </div>
 
                 <div class="flex items-center gap-x-2">
-                    <span class="text-gray-600">and round </span>
+                    <span class="label-text">and round </span>
                     <Select class="p-1 outline-none !focus:ring-0 !focus:outline-none" v-model="data.round">
                         <SelectTrigger class="w-[180px]">
-                            <SelectValue placeholder="Select interval" />
+                            <SelectValue class="label-input" placeholder="Select interval" />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>

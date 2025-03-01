@@ -3,7 +3,7 @@ import { markRaw, onMounted, watch } from 'vue'
 import useDragAndDrop from '@/useDnD'
 import { Controls } from '@vue-flow/controls'
 import { MiniMap } from '@vue-flow/minimap'
-import { VueFlow, useVueFlow, Panel, ConnectionMode, type Connection, useNodesData, type NodeChange } from '@vue-flow/core'
+import { VueFlow, useVueFlow, Panel, ConnectionMode, type Connection, useNodesData, type NodeChange, type ConnectionLineType } from '@vue-flow/core'
 import ProductNode from '@/components/custom-flow/nodes/ProductNode.vue'
 import PlanNode from '@/components/custom-flow/nodes/PlanNode.vue'
 import FeatureNode from '@/components/custom-flow/nodes/FeatureNode.vue'
@@ -45,18 +45,23 @@ onNodesChange(async (changes: any) => {
 
 onEdgesChange(async (changes: any) => {
 
+    const nextChanges = [];
     for (const change of changes) {
         if (change.type === 'add') {
             // console.log(tree, change.item.target, change.item.source)
-            tree.addEdge(change.item.target, change.item.source)
+            const result = tree.addEdge(change.item.target, change.item.source)
+            if (!result) continue;
         }
 
         if (change.type === 'remove') {
             // console.log(change.target, change.source)
-            tree.removeEdge(change.target, change.source)
+            const result = tree.removeEdge(change.target, change.source);
+            if (!result) continue
         }
+
+        nextChanges.push(change)
     }
-    applyEdgeChanges(changes)
+    applyEdgeChanges(nextChanges)
 })
 
 
@@ -96,7 +101,7 @@ onNodeDragStop((drag) => {
     const node = drag.node;
 
     // make sure that node doesn't have any connection
-    for (let edge of common.data.edges) {
+    for (let edge of vueFlow.edges.value) {
         if (edge.source === node.id || edge.target === node.id) {
             return;
         }
@@ -181,13 +186,24 @@ onNodeDragStop((drag) => {
                 const sourceNode = findNode(edge.source);
                 const targetNode = findNode(edge.target)
 
+                console.log(sourceNode, targetNode)
                 if (!sourceNode || !targetNode) {
                     continue;
                 }
 
                 if (!common.canConnect(sourceNode, drag.node)) {
+                    toast.warning('Node is not allowed to connect.')
                     continue;
                 }
+
+                if (!common.canConnect(drag.node, targetNode)) {
+                    toast.warning('Node is not allowed to connect.')
+                    continue;
+                }
+
+                const result = tree.addEdgeBetween(drag.node.id, targetNode.id, sourceNode.id)
+
+                if (!result) return;
 
                 tree.disable = true;
 
@@ -203,12 +219,10 @@ onNodeDragStop((drag) => {
                     id: drag.node.id + '-' + targetNode.id,
                     source: drag.node.id,
                     target: targetNode.id,
-                })
-
-                console.log(sourceNode.id + '-' + drag.node.id, drag.node.id + '-' + targetNode.id, sourceNode.id + '-' + targetNode.id, vueFlow.edges.value)
+                });
 
                 tree.disable = false;
-                tree.addEdgeBetween(drag.node.id, targetNode.id, sourceNode.id)
+
                 break;
             }
         }
@@ -221,26 +235,36 @@ onMounted(() => {
     tree.onApply((effectedNode, sourceNode) => {
         const _effectedNode = vueFlow.findNode(effectedNode);
         const _sourceNode = vueFlow.findNode(sourceNode);
+
+        if (!_effectedNode || !_sourceNode) return;
+
+        const parentNodeType = common.connectable[_effectedNode.type].parent;
+
+        if (_effectedNode.type === parentNodeType) {
+
+        }
+
         console.log('onapply', _effectedNode, _sourceNode)
     })
 
     tree.onRemove((effectedNode, sourceNode) => {
-        const _effectedNode = vueFlow.findNode(effectedNode);
-        const _sourceNode = vueFlow.findNode(sourceNode);
-        console.log('onremove', effectedNode, sourceNode, _effectedNode, _sourceNode)
+        // const _effectedNode = vueFlow.findNode(effectedNode);
+        // const _sourceNode = vueFlow.findNode(sourceNode);
+        // console.log('onremove', effectedNode, sourceNode, _effectedNode, _sourceNode)
     })
 
-    setTimeout(() => {
-        // console.clear();
-    }, 1000)
+    tree.canConnect((...c) => {
+        // console.log(c);
+        return true;
+    })
 })
 
 </script>
 
 <template>
-    <VueFlow :apply-default="false" :connection-mode="ConnectionMode.Strict" :nodeTypes="nodeTypes"
-        :nodes="common.data.nodes" :edges="common.data.edges" @dragover="onDragOver" @dragleave="onDragLeave"
-        fit-view-on-init :default-zoom="1.5" :min-zoom="0.2" :max-zoom="4">
+    <VueFlow :connection-radius="60" :apply-default="false" :connection-mode="ConnectionMode.Strict"
+        :nodeTypes="nodeTypes" :nodes="common.data.nodes" :edges="common.data.edges" @dragover="onDragOver"
+        @dragleave="onDragLeave" fit-view-on-init :default-zoom="1.5" :min-zoom="0.2" :max-zoom="4">
         <MiniMap />
         <Panel position="top-left" class="flex items-center gap-x-4">
             <slot name="panel-left"></slot>

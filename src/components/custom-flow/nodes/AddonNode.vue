@@ -69,21 +69,21 @@ console.log('mounted addon node')
                     </div>
                     <div class="w-full flex-col gap-y-3 flex gap-x-2 mt-4 px-2">
                         <div v-show="data.type === 'recurring'" class="flex items-center space-x-2">
-                            <label class="w-20  text-left">Interval </label>
+                            <label class="w-20 label-text  text-left">Interval </label>
                             <span class="px-2 mr-2">:</span>
                             <div class="flex items-center gap-x-2">
                                 <NumberField class="max-w-[100px] nodrag " v-model="data.intervalAmount"
                                     :default-value="10" :min="1">
                                     <NumberFieldContent>
                                         <NumberFieldDecrement />
-                                        <NumberFieldInput class="text-black" />
+                                        <NumberFieldInput class="label-input" />
                                         <NumberFieldIncrement />
                                     </NumberFieldContent>
                                 </NumberField>
                                 <Select class="p-1 outline-none !focus:ring-0 !focus:outline-none"
                                     v-model="data.interval">
                                     <SelectTrigger class="w-[180px]">
-                                        <SelectValue class="text-black" placeholder="Select interval" />
+                                        <SelectValue class="label-text" placeholder="Select interval" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectGroup>
@@ -105,7 +105,7 @@ console.log('mounted addon node')
                             </div>
                         </div>
                         <div class="flex items-center space-x-2">
-                            <label class="w-20 text-left">Base Price </label>
+                            <label class="w-20 text-left label-text">Base Price </label>
                             <span class="px-2 mr-2">:</span>
                             <div class="flex">
                                 <NumberField class="w-[200px] max-w-max nodrag" v-model="data.basePrice" :step="0.1"
@@ -118,7 +118,7 @@ console.log('mounted addon node')
                                     }">
                                     <NumberFieldContent>
                                         <NumberFieldDecrement />
-                                        <NumberFieldInput class="text-black" />
+                                        <NumberFieldInput class="label-input" />
                                         <NumberFieldIncrement />
                                     </NumberFieldContent>
                                 </NumberField>

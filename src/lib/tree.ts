@@ -1,12 +1,28 @@
 import type { GraphEdge, VueFlowStore } from "@vue-flow/core";
 
 type onNodeUpdateFn = (effectedNode: string, sourceNode: string) => void;
+type canConnect = (
+  targetNode: string,
+  sourceNode: string,
+  targetLinks: {
+    link: string[];
+    linkWithType: string[];
+  },
+  sourceLinks: {
+    link: string[];
+    linkWithType: string[];
+  },
+  middleNode?: string
+) => boolean;
 
 export default class Tree {
   public links: Array<Array<string>> = [];
+
+  public linksWithType: Array<Array<string>> = [];
   // public nodeLinkIndexes: { [key: string]: Array<number> } = {};
   protected _onApply: null | onNodeUpdateFn = null;
   protected _onRemove: null | onNodeUpdateFn = null;
+  protected _canConnect: null | canConnect = null;
   protected edges: Array<GraphEdge>;
   public disable = false;
 
@@ -25,9 +41,16 @@ export default class Tree {
     return this;
   }
 
+  canConnect(fn: canConnect) {
+    this._canConnect = fn;
+    return this;
+  }
+
   addEdge(target: string, source: string) {
-    if (this.disable) return;
+    if (this.disable) return true;
     try {
+      const topLinksWithType = [];
+
       // const targetLinkIndexes = this.nodeLinkIndexes[target];
       const targetLinks = this.links.filter((link) => link.includes(target));
       const topLinks = [];
@@ -35,15 +58,24 @@ export default class Tree {
       if (targetLinks.length > 0) {
         for (let link of targetLinks) {
           const targetIndex = link.indexOf(target);
+
+          const linkWithType = this.linksWithType[this.links.indexOf(link)];
+          // if target is last, link will be destroyed and created
           if (targetIndex === link.length - 1) {
             topLinks.push(link);
             toDeleteLink.push(link);
+
+            topLinksWithType.push(linkWithType);
             // this.links.splice(linkIndex, 1);
           } else {
             const upwardNodes = link.slice(0, link.indexOf(target));
             upwardNodes.push(target);
 
             topLinks.push(upwardNodes);
+
+            const upwardNodeTypes = linkWithType.slice(0, link.indexOf(target));
+            const node = this.vueFlow.findNode(target);
+            upwardNodeTypes.push(node ? node.type : target);
           }
         }
       } else {
@@ -52,13 +84,18 @@ export default class Tree {
 
       const sourceLinks = this.links.filter((link) => link.includes(source));
       const bottomLinks = [];
+      const bottomLinksWithType = [];
       const currentTopNodesOfSource = sourceLinks.map((link) => link[0]);
       if (sourceLinks.length > 0) {
         for (let link of sourceLinks) {
           const sourceIndex = link.indexOf(source);
-
           const downwardNodes = link.slice(sourceIndex, link.length);
           bottomLinks.push(downwardNodes);
+
+          const linkWithType = this.linksWithType[this.links.indexOf(link)];
+          bottomLinksWithType.push(
+            linkWithType.slice(sourceIndex, link.length)
+          );
 
           if (sourceIndex === 0) {
             toDeleteLink.push(link);
@@ -70,8 +107,29 @@ export default class Tree {
 
       // console.log(topLinks, bottomLinks);
 
-      for (let topLink of topLinks) {
-        for (let bottomLink of bottomLinks) {
+      for (let i = 0; i < topLinks.length; i++) {
+        const topLink = topLinks[i];
+        const topLinkWithType = topLinksWithType[i];
+        for (let j = 0; j < bottomLinks.length; j++) {
+          const bottomLink = bottomLinks[i];
+          const bottomLinkWithType = bottomLinksWithType[i];
+          if (
+            this._canConnect &&
+            !this._canConnect(
+              target,
+              source,
+              {
+                link: topLink,
+                linkWithType: topLinkWithType,
+              },
+              {
+                link: bottomLink,
+                linkWithType: bottomLinkWithType,
+              }
+            )
+          ) {
+            return;
+          }
           const newLink = [...topLink, ...bottomLink];
           this.links.push(newLink);
 
@@ -90,21 +148,34 @@ export default class Tree {
               // this._onApply(topNode, lastNode);
             }
           }
+
+          const l = [];
+          for (const nodeIndex of newLink) {
+            const node = this.vueFlow.findNode(nodeIndex);
+            l.push(node ? node.type : nodeIndex);
+          }
+
+          this.linksWithType.push(l);
         }
       }
 
       for (const link of toDeleteLink) {
-        this.links.splice(this.links.indexOf(link), 1);
+        const index = this.links.indexOf(link);
+        this.links.splice(index, 1);
+
+        this.linksWithType.splice(index, 1);
       }
 
-      console.log(this.links);
+      console.log(this.links, this.linksWithType);
+      return true;
     } catch (e) {
       console.log(e, this.links, { target, source });
+      return false;
     }
   }
 
   removeEdge(target: string, source: string) {
-    if (this.disable) return;
+    if (this.disable) return true;
     // Get link which has both target and source
     const links = this.links.filter(
       (link) => link.includes(target) && link.includes(source)
@@ -126,6 +197,7 @@ export default class Tree {
 
     // remove link since it is splitted
     this.links.splice(linkIndex, 1);
+    this.linksWithType.splice(linkIndex, 1);
 
     // if upper nodes has more than one
     if (upwardNodes.length > 1) {
@@ -140,11 +212,16 @@ export default class Tree {
         this._onRemove(firstNode, lastNode);
       }
 
-      for (const node of upwardNodes) {
+      const l = [];
+      for (const nodeIndex of upwardNodes) {
         if (this._onRemove) {
-          this._onRemove(lastNode, node);
+          this._onRemove(lastNode, nodeIndex);
         }
+        const node = this.vueFlow.findNode(nodeIndex);
+        l.push(node ? node.type : nodeIndex);
       }
+
+      this.linksWithType.push(l);
     } else {
       // call remove listener for the first node and last node
       if (this._onRemove) {
@@ -159,9 +236,13 @@ export default class Tree {
       // if (this._onApply) {
       //   this._onApply(downwardNodes[0], lastNode);
       // }
+      const l = [];
 
-      for (const node of downwardNodes) {
+      for (const nodeIndex of downwardNodes) {
+        const node = this.vueFlow.findNode(nodeIndex);
+        l.push(node ? node.type : nodeIndex);
       }
+      this.linksWithType.push(l);
     } else {
       // prevent calling listener twice if there is only one node in each link
       if (this._onRemove && upwardNodes.length !== downwardNodes.length) {
@@ -169,7 +250,9 @@ export default class Tree {
       }
     }
 
-    console.log(this.links);
+    console.log(this.links, this.linksWithType);
+
+    return true;
   }
 
   addEdgeBetween(current: string, target: string, source: string) {
@@ -178,8 +261,39 @@ export default class Tree {
     );
 
     const link = links[0];
+    const linkIndex = this.links.indexOf(link);
 
-    link.splice(link.indexOf(target) + 1, 0, current);
+    if (
+      this._canConnect &&
+      !this._canConnect(
+        target,
+        source,
+        {
+          link: link,
+          linkWithType: this.linksWithType[linkIndex],
+        },
+        {
+          link: link,
+          linkWithType: this.linksWithType[linkIndex],
+        },
+        current
+      )
+    ) {
+      return false;
+    }
+
+    const nodeIndex = link.indexOf(target) + 1;
+
+    // add current in the link
+    link.splice(nodeIndex, 0, current);
+
+    // update in link with type
+    const node = this.vueFlow.findNode(current);
+    this.linksWithType[linkIndex].splice(
+      nodeIndex,
+      0,
+      node ? node.type : current
+    );
 
     if (this._onApply) {
       const firstNode = link[0];
@@ -192,7 +306,9 @@ export default class Tree {
       }
     }
 
-    console.log(this.links);
+    console.log(this.links, this.linksWithType);
+
+    return true;
   }
 
   traverseDownward(target: string, currentLinkIndex: null | number = null) {
@@ -239,10 +355,20 @@ export default class Tree {
 
     const topEdges = targetEdges.filter((edge) => !sourceEdges.includes(edge));
 
-    for (let topEdge of topEdges) {
+    for (const topEdge of topEdges) {
       this.traverseDownward(topEdge);
     }
 
-    console.log(this.links);
+    for (const link of this.links) {
+      const t = [];
+      for (const nodeIndex of link) {
+        const node = this.vueFlow.findNode(nodeIndex);
+        t.push(node ? node.type : nodeIndex);
+      }
+
+      this.linksWithType.push(t);
+    }
+
+    console.log(this.linksWithType);
   }
 }

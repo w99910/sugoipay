@@ -45,12 +45,12 @@ console.log('mounted feature node')
                     class="rounded w-full py-1.5 border">Usage</button>
             </div>
             <div v-show="data.type === 'usage'" class="flex items-center gap-x-4 mt-2">
-                <span class="text-gray-600">Limit Threshold</span>
+                <span class="label-text">Limit Threshold</span>
                 <NumberField class="max-w-[200px] nodrag" v-model="data.total" id="threshold" :default-value="10"
                     :min="-1">
                     <NumberFieldContent>
                         <NumberFieldDecrement />
-                        <NumberFieldInput />
+                        <NumberFieldInput class="label-input" />
                         <NumberFieldIncrement />
                     </NumberFieldContent>
                 </NumberField>
