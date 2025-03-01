@@ -40,14 +40,14 @@ console.log('mounted addon node')
 <template>
 
     <div class="custom-node">
-        <span>{{ id }}</span>
+        <!-- <span>{{ id }}</span> -->
         <Handle type="source" :position="Position.Top" />
         <!-- <NodeResizer class="rounded-lg" color="transparent" :min-width="common.node.minWidth"
             :min-height="common.node.minHeight" /> -->
-        <div class="flex items-center gap-x-2 bg-gray-100 p-1.5">
-            <div class="p-2 rounded bg-[#99d98c]">
+        <div class="flex items-center gap-x-2 bg-[#7ed165] p-1.5">
+            <div class="p-2 rounded bg-[#9ae08e]">
                 <DiamondPlus :size="common.iconSize" color="white" />
-            </div> <input class="nodrag font-semibold text-[#99d98c]" type="text" placeholder="Enter addon name"
+            </div> <input class="nodrag font-semibold text-white" type="text" placeholder="Enter addon name"
                 v-model="data.name" />
         </div>
         <div class="flex flex-col gap-y-2 p-2">

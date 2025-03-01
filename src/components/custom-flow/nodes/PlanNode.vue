@@ -39,16 +39,15 @@ console.log('mounted plan node')
 
 <template>
     <div class="custom-node">
-        <span>{{ id }}</span>
+        <!-- <span>{{ id }}</span> -->
         <Handle type="source" :position="Position.Top" />
         <!-- <NodeResizer class="rounded-lg" color="transparent" :min-width="common.node.minWidth"
             :min-height="common.node.minHeight" /> -->
-        <div class="flex items-center gap-x-2 bg-gray-100 p-1.5">
-            <div class="p-2 rounded bg-[#34a0a4]">
+        <div class="flex items-center gap-x-2 bg-[#34a0a4] p-1.5">
+            <div class="p-2 rounded bg-[#47b7bb]">
                 <Frame :size="common.iconSize" color="white" />
             </div> <input @focusin="data.isFocus = true" @focusout="data.isFocus = false"
-                class="nodrag font-semibold text-[#34a0a4]" type="text" placeholder="Enter plan name"
-                v-model="data.name" />
+                class="nodrag font-semibold text-white" type="text" placeholder="Enter plan name" v-model="data.name" />
         </div>
 
         <div class="flex flex-col gap-y-2 p-2">
@@ -78,14 +77,14 @@ console.log('mounted plan node')
                                     :default-value="10" :min="1">
                                     <NumberFieldContent>
                                         <NumberFieldDecrement />
-                                        <NumberFieldInput class="text-black" />
+                                        <NumberFieldInput class="label-input" />
                                         <NumberFieldIncrement />
                                     </NumberFieldContent>
                                 </NumberField>
                                 <Select class="p-1 outline-none !focus:ring-0 !focus:outline-none"
                                     v-model="data.interval">
                                     <SelectTrigger class="w-[180px]">
-                                        <SelectValue class="text-black" placeholder="Select interval" />
+                                        <SelectValue class="label-input" placeholder="Select interval" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectGroup>
@@ -120,7 +119,7 @@ console.log('mounted plan node')
                                     }">
                                     <NumberFieldContent>
                                         <NumberFieldDecrement />
-                                        <NumberFieldInput class="text-black" />
+                                        <NumberFieldInput class="label-input" />
                                         <NumberFieldIncrement />
                                     </NumberFieldContent>
                                 </NumberField>

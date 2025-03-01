@@ -36,6 +36,12 @@ body,
   transform-origin: bottom right;
 }
 
+
+.vue-flow__node.selected {
+  box-shadow: 0 12px 12px rgba(0, 0, 0, 0.2);
+  border-color: #7bb0ff;
+}
+
 .dnd-flow {
     flex-direction:column;
     display:flex;
@@ -266,11 +272,11 @@ body,
   }
 
   .custom-node {
-    @apply bg-white dark:bg-zinc-700 text-sm transition-all duration-500 rounded overflow-hidden border border-gray-400 h-full w-full;
+    @apply bg-white dark:bg-sidebar text-sm transition-all duration-500 rounded overflow-hidden border border-gray-400 h-full w-full;
   }
 
   .group\/collapsible {
-    @apply text-sm text-gray-500 dark:text-gray-200 p-2 border rounded flex items-start flex-col;
+    @apply text-sm text-gray-600 dark:text-gray-400 p-2 border rounded flex items-start flex-col;
   }
 
   input:focus {
@@ -279,6 +285,14 @@ body,
 
   .vue-flow__resize-control {
     @apply !bg-transparent !border-transparent;
+  }
+
+  .label-text {
+    @apply text-gray-600 dark:text-gray-400;
+  }
+
+  .label-input {
+    @apply text-gray-800 dark:text-gray-200;
   }
 
 

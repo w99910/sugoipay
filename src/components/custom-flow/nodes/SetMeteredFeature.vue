@@ -24,12 +24,12 @@ onMounted(() => {
 
 <template>
     <div class="custom-node">
-        <span>{{ id }}</span>
+        <!-- <span>{{ id }}</span> -->
         <Handle type="source" :position="Position.Top" />
-        <div class="flex items-center gap-x-2 bg-gray-100 p-1.5">
-            <div class="p-2 rounded bg-[#3753d1]">
+        <div class="flex items-center gap-x-2 bg-[#3753d1] p-1.5">
+            <div class="p-2 rounded bg-[#506ff8]">
                 <Table :size="common.iconSize" color="white" />
-            </div> <span class="text-[#3753d1] font-semibold text-sm pr-2">Set Metered Feature</span>
+            </div> <span class="text-white font-semibold text-sm pr-2">Set Metered Feature</span>
         </div>
         <Handle type="target" :position="Position.Bottom" />
     </div>

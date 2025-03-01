@@ -52,21 +52,21 @@ console.log('mounted feature condition node')
 
 <template>
     <div class="custom-node">
-        <span>{{ id }}</span>
+        <!-- <span>{{ id }}</span> -->
         <Handle type="source" :position="Position.Top" />
         <!-- <NodeResizer class="rounded-lg" color="transparent" :min-width="common.node.minWidth"
             :min-height="common.node.minHeight" /> -->
-        <div class="flex items-center gap-x-2 bg-gray-100 p-1.5">
-            <div class="p-2 rounded bg-[#3753d1]">
+        <div class="flex items-center gap-x-2 bg-blue-600 p-1.5">
+            <div class="p-2 rounded bg-blue-500">
                 <Braces :size="common.iconSize" color="white" />
-            </div> <span class="text-[#3753d1] font-semibold text-sm">Feature Billing Condition</span>
+            </div> <span class="text-white font-semibold text-sm">Feature Billing Condition</span>
         </div>
 
         <div class="flex flex-col gap-y-2 p-2">
 
             <div class="flex flex-col gap-2 p-2 items-start">
                 <div class="flex items-center gap-x-2">
-                    <span class="text-gray-600">Charge</span>
+                    <span class="label-text">Charge</span>
                     <NumberField class="w-[200px] max-w-max nodrag" v-model="data.amount" :step="0.001"
                         :default-value="1" :format-options="{
                             style: 'currency',
@@ -83,7 +83,7 @@ console.log('mounted feature condition node')
                     </NumberField>
                 </div>
 
-                <span class="text-gray-600">until amount reaches </span>
+                <span class="label-text">until amount reaches </span>
                 <NumberField class="nodrag" v-model="data.until" id="age" :default-value="10" :min="1">
                     <NumberFieldContent>
                         <NumberFieldDecrement />

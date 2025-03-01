@@ -80,14 +80,14 @@ export default class Tree {
 
             // let's say a -> b -> c -> d
             // so let b and c apply on a and finally sync a with d
-            for (let i = 1; i < topLink.length; i++) {
+            for (let i = 0; i < topLink.length; i++) {
               this._onApply(lastNode, topLink[i]);
             }
 
             this._onApply(topLink[0], lastNode);
 
             for (const topNode of currentTopNodesOfSource) {
-              this._onApply(topNode, lastNode);
+              // this._onApply(topNode, lastNode);
             }
           }
         }

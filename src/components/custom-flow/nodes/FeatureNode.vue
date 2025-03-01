@@ -26,13 +26,13 @@ console.log('mounted feature node')
 
 <template>
     <div class="custom-node">
-        <span>{{ id }}</span>
+        <!-- <span>{{ id }}</span> -->
         <!-- <NodeResizer class="rounded-lg" color="transparent" :min-width="common.node.minWidth"
             :min-height="common.node.minHeight" /> -->
-        <div class="flex items-center gap-x-2 bg-gray-100 p-1.5">
-            <div class="p-2 rounded bg-[#1e6091]">
+        <div class="flex items-center gap-x-2 bg-[#4a48bb] p-1.5">
+            <div class="p-2 rounded bg-[#5e5cd3]">
                 <Shield :size="common.iconSize" color="white" />
-            </div> <input class="nodrag font-semibold text-[#1e6091]" type="text" placeholder="Enter feature name"
+            </div> <input class="nodrag font-semibold text-white" type="text" placeholder="Enter feature name"
                 v-model="data.name" />
         </div>
         <div class="p-3 flex items-center gap-y-2 flex-col h-full">
