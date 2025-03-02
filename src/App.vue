@@ -39,6 +39,7 @@ import {
 import CustomFlow from './components/custom-flow/CustomFlow.vue'
 import common from './lib/common'
 import Button from './components/ui/button/Button.vue';
+import Tree from './lib/tree';
 
 const { onConnect, addEdges, addNodes, onNodeDragStop, getEdges, onNodeDragStart, onPaneContextMenu } = useVueFlow()
 
@@ -49,14 +50,18 @@ const width = window.innerWidth;
 
 const height = window.innerHeight;
 
+
 const addNode = (type: string) => {
+  const tree = Tree.instance();
+  const id = tree?.getNodes().length ?? Math.random() * 500;
   const node = {
-    id: Math.random().toString(),
+    id: (id + 1).toString(),
     position: { x: Math.random() * 500, y: Math.random() * 500 },
     label: 'Random Node',
     type: type,
   };
 
+  console.log(node)
   addNodes(node)
 }
 

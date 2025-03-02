@@ -1,9 +1,10 @@
 <script lang="ts" setup>
 import { Handle, Position, } from '@vue-flow/core'
 import { Shield } from 'lucide-vue-next';
-import { reactive, ref } from 'vue'
+import { reactive, onMounted } from 'vue'
 import common from '@/lib/common';
 import { Textarea } from '@/components/ui/textarea'
+import { useVueFlow } from '@vue-flow/core';
 const props = defineProps(['data', 'id'])
 import {
     NumberField,
@@ -18,6 +19,13 @@ const data = reactive({
     total: 10,
     type: 'ability',
     description: ''
+})
+
+onMounted(() => {
+    const { updateNodeData } = useVueFlow();
+    updateNodeData(props.id, {
+        options: data
+    })
 })
 
 console.log('mounted feature node')

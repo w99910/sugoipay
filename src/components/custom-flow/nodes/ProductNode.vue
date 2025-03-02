@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { Handle, Position } from '@vue-flow/core'
+import { Handle, Position, useVueFlow } from '@vue-flow/core'
 import { LayoutGrid } from 'lucide-vue-next';
-import { reactive, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import { NodeResizer } from '@vue-flow/node-resizer'
 import common from '@/lib/common';
 
@@ -9,6 +9,14 @@ const props = defineProps(['data', 'type', 'label', 'id'])
 
 const data = reactive({
     name: props.data.name
+})
+
+onMounted(() => {
+    const { updateNodeData } = useVueFlow();
+
+    updateNodeData(props.id, {
+        options: data,
+    })
 })
 
 console.log('mounted product node')

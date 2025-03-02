@@ -22,7 +22,7 @@ import Tree from '@/lib/tree'
 const { onDragOver, onDragLeave, isDragOver } = useDragAndDrop()
 
 const vueFlow = useVueFlow();
-const { onConnect, addEdges, onNodeDragStop, findEdge, findNode, onNodesChange, applyNodeChanges, onEdgesChange, applyEdgeChanges, } = vueFlow;
+const { onConnect, addEdges, onInit, onNodeDragStop, findEdge, findNode, onNodesChange, applyNodeChanges, onEdgesChange, applyEdgeChanges, } = vueFlow;
 
 let tree: Tree;
 onNodesChange(async (changes: any) => {
@@ -50,7 +50,10 @@ onEdgesChange(async (changes: any) => {
         if (change.type === 'add') {
             // console.log(tree, change.item.target, change.item.source)
             const result = tree.addEdge(change.item.target, change.item.source)
-            if (!result) continue;
+            if (!result) {
+                toast.warning('Node is not allowed to connect.');
+                continue;
+            }
         }
 
         if (change.type === 'remove') {
@@ -85,10 +88,10 @@ const _onConnect = (connection: Connection) => {
         return;
     }
 
-    if (!common.canConnect(sourceNode, targetNode)) {
-        toast.warning('Node is not allowed to connect.')
-        return;
-    }
+    // if (!common.canConnect(sourceNode, targetNode)) {
+    //     toast.warning('Node is not allowed to connect.')
+    //     return;
+    // }
 
     // common.applyEffect(vueFlow, targetNode, sourceNode);
 
@@ -191,7 +194,7 @@ onNodeDragStop((drag) => {
                     continue;
                 }
 
-                if (!common.canConnect(sourceNode, drag.node)) {
+                if (!tree.canConnect(sourceNode, drag.node)) {
                     toast.warning('Node is not allowed to connect.')
                     continue;
                 }
@@ -230,32 +233,29 @@ onNodeDragStop((drag) => {
 })
 
 onMounted(() => {
-    tree = new Tree(vueFlow);
+    onInit(() => {
+        tree = new Tree(vueFlow);
 
-    tree.onApply((effectedNode, sourceNode) => {
-        const _effectedNode = vueFlow.findNode(effectedNode);
-        const _sourceNode = vueFlow.findNode(sourceNode);
+        tree.onApply((effectedNode, sourceNode) => {
+            // const _effectedNode = vueFlow.findNode(effectedNode);
+            // const _sourceNode = vueFlow.findNode(sourceNode);
 
-        if (!_effectedNode || !_sourceNode) return;
+            // if (!_effectedNode || !_sourceNode) return;
 
-        const parentNodeType = common.connectable[_effectedNode.type].parent;
+            // const parentNodeType = common.connectable[_effectedNode.type].parent;
 
-        if (_effectedNode.type === parentNodeType) {
+            // if (_effectedNode.type === parentNodeType) {
 
-        }
+            // }
 
-        console.log('onapply', _effectedNode, _sourceNode)
-    })
+            // console.log('onapply', _effectedNode, _sourceNode)
+        })
 
-    tree.onRemove((effectedNode, sourceNode) => {
-        // const _effectedNode = vueFlow.findNode(effectedNode);
-        // const _sourceNode = vueFlow.findNode(sourceNode);
-        // console.log('onremove', effectedNode, sourceNode, _effectedNode, _sourceNode)
-    })
-
-    tree.canConnect((...c) => {
-        // console.log(c);
-        return true;
+        tree.onRemove((effectedNode, sourceNode) => {
+            // const _effectedNode = vueFlow.findNode(effectedNode);
+            // const _sourceNode = vueFlow.findNode(sourceNode);
+            // console.log('onremove', effectedNode, sourceNode, _effectedNode, _sourceNode)
+        })
     })
 })
 

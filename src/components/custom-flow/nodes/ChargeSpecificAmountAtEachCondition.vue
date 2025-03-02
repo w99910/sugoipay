@@ -2,7 +2,8 @@
 import common from '@/lib/common';
 import { Handle, Position } from '@vue-flow/core'
 import { BadgeCent } from 'lucide-vue-next';
-import { reactive } from 'vue'
+import { reactive, onMounted } from 'vue'
+import { useVueFlow } from '@vue-flow/core';
 // import Collisp
 const props = defineProps(['data', 'id'])
 
@@ -11,6 +12,12 @@ const data = reactive({
 
 console.log('mounted charge specific amount node')
 
+onMounted(() => {
+    const { updateNodeData } = useVueFlow();
+    updateNodeData(props.id, {
+        options: data
+    })
+})
 
 </script>
 

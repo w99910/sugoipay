@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Handle, Position, useVueFlow, type Connection } from '@vue-flow/core'
 import { Frame, ChevronRight } from 'lucide-vue-next';
-import { reactive, ref } from 'vue'
+import { onMounted, reactive, watch } from 'vue'
 import { NodeResizer } from '@vue-flow/node-resizer'
 import common from '@/lib/common';
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/components/ui/collapsible';
@@ -24,13 +24,20 @@ import {
 // import Collisp
 const props = defineProps(['data', 'id'])
 
+const { updateNodeData } = useVueFlow();
+
 const data = reactive({
-    isFocus: false,
     name: props.data.name,
     type: props.data.billing_type ?? 'recurring',
     interval: 'month',
     intervalAmount: 1,
     basePrice: 0,
+})
+
+onMounted(() => {
+    updateNodeData(props.id, {
+        options: data
+    })
 })
 
 console.log('mounted plan node')

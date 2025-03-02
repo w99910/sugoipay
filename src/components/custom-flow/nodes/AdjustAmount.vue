@@ -10,7 +10,6 @@ import {
     NumberFieldIncrement,
     NumberFieldInput,
 } from '@/components/ui/number-field'
-
 import {
     Select,
     SelectContent,
@@ -22,8 +21,7 @@ import {
 
 const props = defineProps(['data', 'id'])
 
-const { updateNodeData, findNode, getNodes } = useVueFlow();
-const vuef = useVueFlow();
+const { updateNodeData, getNodes } = useVueFlow();
 const data = reactive({
     divideBy: props.data.divideBy ?? 1,
     round: props.data.round ?? 'up'

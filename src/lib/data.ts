@@ -5,6 +5,7 @@ export default {
         connectable: ["plan", "addon"],
         children: ["plan", "addon"],
         appliable: true,
+        allowMultipleConnections: true,
       },
       explain: {
         connectable: ["plan", "addon"],
@@ -21,6 +22,7 @@ export default {
         ],
         children: ["feature"],
         appliable: true,
+        allowMultipleConnections: true,
       },
       addon: {
         connectable: [
@@ -33,6 +35,7 @@ export default {
         ],
         children: ["feature"],
         appliable: true,
+        allowMultipleConnections: true,
       },
       feature: {
         connectable: [
@@ -95,6 +98,6 @@ export default {
           "feature",
         ],
       },
-    },
+    } as any,
   },
 };

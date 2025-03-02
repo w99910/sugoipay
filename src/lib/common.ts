@@ -30,7 +30,7 @@ export default {
         id: "1",
         type: "product",
 
-        data: { name: "Product A", label: h("div", "Product A") },
+        data: { name: "Product A" },
         position: { x: 250, y: 5 },
       },
       {
@@ -102,7 +102,7 @@ export default {
       // { id: "4-11", target: "11", source: "4" },
       { id: "4-6", target: "6", source: "4" },
       // { id: "11-2", target: "2", source: "11" },
-      { id: "6-11", target: "11", source: "6" },
+      // { id: "6-11", target: "11", source: "6" },
       // { id: "5-3", target: "3", source: "5" },
       { id: "7-12", target: "12", source: "7" },
     ],

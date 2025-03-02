@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import { Handle, Position, } from '@vue-flow/core'
 import { DiamondPlus, ChevronRight } from 'lucide-vue-next';
-import { reactive, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue';
+import { useVueFlow } from '@vue-flow/core';
 import { NodeResizer } from '@vue-flow/node-resizer'
 import common from '@/lib/common';
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/components/ui/collapsible';
@@ -23,8 +24,7 @@ import {
 // import Collisp
 const props = defineProps(['data', 'id'])
 
-const data = reactive({
-    isFocus: false,
+const _data = reactive({
     name: props.data.name,
     type: props.data.billing_type ?? 'recurring',
     interval: 'month',
@@ -32,7 +32,13 @@ const data = reactive({
     basePrice: 0,
 })
 
-console.log('mounted addon node')
+
+onMounted(() => {
+    const { updateNodeData } = useVueFlow();
+    updateNodeData(props.id, {
+        options: _data
+    })
+})
 
 
 </script>
@@ -48,7 +54,7 @@ console.log('mounted addon node')
             <div class="p-2 rounded bg-[#9ae08e]">
                 <DiamondPlus :size="common.iconSize" color="white" />
             </div> <input class="nodrag font-semibold text-white" type="text" placeholder="Enter addon name"
-                v-model="data.name" />
+                v-model="_data.name" />
         </div>
         <div class="flex flex-col gap-y-2 p-2">
             <Collapsible class="group/collapsible text-sm text-gray-500 p-2 border rounded flex items-start flex-col">
@@ -59,20 +65,20 @@ console.log('mounted addon node')
                 </CollapsibleTrigger>
                 <CollapsibleContent class="mt-2 w-full border-t py-2">
                     <div class="w-full flex items-center gap-x-2 justify-between px-2">
-                        <button @click="data.type = 'one-time'"
-                            :class="{ 'bg-gray-700 p-1.5 text-gray-100': data.type === 'one-time' }"
+                        <button @click="_data.type = 'one-time'"
+                            :class="{ 'bg-gray-700 p-1.5 text-gray-100': _data.type === 'one-time' }"
                             class="rounded w-full py-1.5 border">One
                             Time</button>
-                        <button @click="data.type = 'recurring'"
-                            :class="{ 'bg-gray-700 p-1.5  text-gray-100': data.type === 'recurring' }"
+                        <button @click="_data.type = 'recurring'"
+                            :class="{ 'bg-gray-700 p-1.5  text-gray-100': _data.type === 'recurring' }"
                             class="rounded w-full py-1.5 border">Recurring</button>
                     </div>
                     <div class="w-full flex-col gap-y-3 flex gap-x-2 mt-4 px-2">
-                        <div v-show="data.type === 'recurring'" class="flex items-center space-x-2">
+                        <div v-show="_data.type === 'recurring'" class="flex items-center space-x-2">
                             <label class="w-20 label-text  text-left">Interval </label>
                             <span class="px-2 mr-2">:</span>
                             <div class="flex items-center gap-x-2">
-                                <NumberField class="max-w-[100px] nodrag " v-model="data.intervalAmount"
+                                <NumberField class="max-w-[100px] nodrag " v-model="_data.intervalAmount"
                                     :default-value="10" :min="1">
                                     <NumberFieldContent>
                                         <NumberFieldDecrement />
@@ -81,7 +87,7 @@ console.log('mounted addon node')
                                     </NumberFieldContent>
                                 </NumberField>
                                 <Select class="p-1 outline-none !focus:ring-0 !focus:outline-none"
-                                    v-model="data.interval">
+                                    v-model="_data.interval">
                                     <SelectTrigger class="w-[180px]">
                                         <SelectValue class="label-text" placeholder="Select interval" />
                                     </SelectTrigger>
@@ -108,7 +114,7 @@ console.log('mounted addon node')
                             <label class="w-20 text-left label-text">Base Price </label>
                             <span class="px-2 mr-2">:</span>
                             <div class="flex">
-                                <NumberField class="w-[200px] max-w-max nodrag" v-model="data.basePrice" :step="0.1"
+                                <NumberField class="w-[200px] max-w-max nodrag" v-model="_data.basePrice" :step="0.1"
                                     :default-value="1" :format-options="{
                                         style: 'currency',
                                         currency: 'USD',

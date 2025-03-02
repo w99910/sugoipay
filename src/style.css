@@ -11,8 +11,8 @@
 @tailwind utilities;
 
 .vue-flow__handle {
-  width: 8px !important;
-  height: 8px !important;
+  width: 10px !important;
+  height: 10px !important;
 }
 
 html,
@@ -36,11 +36,21 @@ body,
   transform-origin: bottom right;
 }
 
+.vue-flow__node {
+  border-radius: 120px;
+}
+
 
 .vue-flow__node.selected {
-  box-shadow: 0 12px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: -10px 15px 20px rgba(34, 34, 34, 0.1), 10px 15px 20px rgba(34, 34, 34, 0.1);
   border-color: #7bb0ff;
 }
+
+.dark .vue-flow__node.selected {
+  box-shadow: -20px 15px 30px rgba(175, 175, 175, 0.1), 20px 15px 30px rgba(175, 175, 175, 0.1);
+  border-color: #7bb0ff;
+}
+
 
 .dnd-flow {
     flex-direction:column;
@@ -272,7 +282,11 @@ body,
   }
 
   .custom-node {
-    @apply bg-white dark:bg-sidebar text-sm transition-all duration-500 rounded overflow-hidden border border-gray-400 h-full w-full;
+    @apply bg-white rounded-xl dark:bg-sidebar text-sm rounded overflow-hidden border border-gray-400 h-full w-full;
+  }
+
+  .selected .custom-node{
+    @apply !border-blue-500
   }
 
   .group\/collapsible {
