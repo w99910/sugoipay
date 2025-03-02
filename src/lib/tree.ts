@@ -1,19 +1,11 @@
 import type { GraphEdge, GraphNode, VueFlowStore } from "@vue-flow/core";
-import data from "./data";
+import { data, config } from "./global";
+import { toRaw } from "vue";
 
 type onNodeUpdateFn = (effectedNode: string, sourceNode: string) => void;
-type canConnect = (
-  targetNode: string,
-  sourceNode: string,
-  targetLinks: {
-    link: string[];
-    linkWithType: string[];
-  },
-  sourceLinks: {
-    link: string[];
-    linkWithType: string[];
-  },
-  middleNode?: string
+type CanApplyFn = (
+  targetNode: string | GraphNode | undefined,
+  sourceNode: string | GraphNode | undefined
 ) => boolean;
 
 let instance: null | Tree = null;
@@ -25,7 +17,7 @@ export default class Tree {
   // public nodeLinkIndexes: { [key: string]: Array<number> } = {};
   protected _onApply: null | onNodeUpdateFn = null;
   protected _onRemove: null | onNodeUpdateFn = null;
-  protected _canConnect: null | canConnect = null;
+  protected _canApply: null | CanApplyFn = null;
   protected edges;
   public disable = false;
 
@@ -57,6 +49,11 @@ export default class Tree {
     return this;
   }
 
+  canApply(fn: CanApplyFn) {
+    this._canApply = fn;
+    return this;
+  }
+
   applyEffect(
     targetNode: string | GraphNode | undefined,
     sourceNode: string | GraphNode | undefined
@@ -69,10 +66,14 @@ export default class Tree {
       sourceNode = this.vueFlow.findNode(sourceNode);
     }
     if (!targetNode || !sourceNode) return false;
-    const targetConfig = data.config.connections[targetNode.type];
-    const sourceConfig = data.config.connections[sourceNode.type];
+    const targetConfig = config.connections[targetNode.type];
+    const sourceConfig = config.connections[sourceNode.type];
 
-    if (targetConfig.appliable && sourceConfig.appliable) {
+    if (
+      targetConfig.appliable &&
+      sourceConfig.appliable &&
+      targetConfig.connectable.includes(sourceNode.type)
+    ) {
       if (targetConfig.children?.includes(sourceNode.type)) {
         if (!targetNode.data[sourceNode.type]) {
           targetNode.data[sourceNode.type] = {};
@@ -96,10 +97,22 @@ export default class Tree {
           const referenceNode = this.vueFlow.findNode(referenceNodeId);
           if (!referenceNode) continue;
 
+          if (!targetConfig.connectable.includes(referenceNode.type)) {
+            continue;
+          }
+
           if (targetConfig.children?.includes(referenceNode.type)) {
             if (!targetNode.data[referenceNode.type]) {
               targetNode.data[referenceNode.type] = {};
             }
+
+            // if (
+            //   targetConfig.canApply &&
+            //   !targetConfig.canApply(targetNode.data, referenceNode)
+            // ) {
+            //   global
+            //   continue;
+            // }
 
             targetNode.data[referenceNode.type][referenceNode.id] =
               referenceNode.data;
@@ -116,7 +129,11 @@ export default class Tree {
       }
     }
 
-    if (sourceConfig.appliable && !targetConfig.appliable) {
+    if (
+      sourceConfig.appliable &&
+      !targetConfig.appliable &&
+      sourceConfig.connectable.includes(targetNode.type)
+    ) {
       // check target node can be children instead of attributes
       if (sourceConfig.children?.includes(targetNode.type)) {
         if (!sourceNode.data[targetNode.type]) {
@@ -140,6 +157,10 @@ export default class Tree {
         sourceNode.data.references = [];
       }
       sourceNode.data.references.push(targetNode.id);
+
+      if (sourceConfig.validate) {
+        sourceConfig.validate(sourceNode);
+      }
     }
 
     if (!sourceConfig.appliable && !targetConfig.appliable) {
@@ -148,7 +169,11 @@ export default class Tree {
         for (const referenceNodeId of sourceNode.data.references) {
           const referenceNode = this.vueFlow.findNode(referenceNodeId);
           if (!referenceNode) continue;
-          const referenceConfig = data.config.connections[referenceNode.type];
+          const referenceConfig = config.connections[referenceNode.type];
+          if (!referenceConfig.connectable.includes(targetNode.type)) {
+            continue;
+          }
+
           if (referenceConfig.children?.includes(targetNode.type)) {
             if (!referenceNode.data[targetNode.type]) {
               referenceNode.data[targetNode.type] = {};
@@ -173,7 +198,8 @@ export default class Tree {
 
   canConnect(
     targetNode: string | GraphNode | undefined,
-    sourceNode: string | GraphNode | undefined
+    sourceNode: string | GraphNode | undefined,
+    isBetween: boolean = false
   ) {
     if (typeof targetNode === "string") {
       targetNode = this.vueFlow.findNode(targetNode);
@@ -184,10 +210,11 @@ export default class Tree {
     }
     if (!targetNode || !sourceNode) return false;
 
-    const targetConfig = data.config.connections[targetNode.type];
+    const targetConfig = config.connections[targetNode.type];
     const existingEdges = this.edges.value;
 
     if (
+      !isBetween &&
       !targetConfig.allowMultipleConnections &&
       existingEdges.some(
         (edge) => edge.source === sourceNode.id || edge.target === targetNode.id
@@ -219,7 +246,7 @@ export default class Tree {
 
       // const targetLinkIndexes = this.nodeLinkIndexes[target];
       const targetLinks = this.links.filter((link) => link.includes(target));
-      const topLinks = [];
+      const topLinks: string[][] = [];
       const toDeleteLink = [];
       if (targetLinks.length > 0) {
         for (let link of targetLinks) {
@@ -236,6 +263,14 @@ export default class Tree {
           } else {
             const upwardNodes = link.slice(0, link.indexOf(target));
             upwardNodes.push(target);
+
+            if (
+              topLinks.some(
+                (link) => JSON.stringify(link) === JSON.stringify(upwardNodes)
+              )
+            ) {
+              continue;
+            }
 
             topLinks.push(upwardNodes);
 
@@ -271,7 +306,7 @@ export default class Tree {
         bottomLinks.push([source]);
       }
 
-      // console.log(topLinks, bottomLinks);
+      console.log(topLinks, bottomLinks);
 
       for (let i = 0; i < topLinks.length; i++) {
         const topLink = topLinks[i];
@@ -290,23 +325,6 @@ export default class Tree {
           }
 
           const bottomLinkWithType = bottomLinksWithType[i];
-          if (
-            this._canConnect &&
-            !this._canConnect(
-              target,
-              source,
-              {
-                link: topLink,
-                linkWithType: topLinkWithType,
-              },
-              {
-                link: bottomLink,
-                linkWithType: bottomLinkWithType,
-              }
-            )
-          ) {
-            return;
-          }
           const newLink = [...topLink, ...bottomLink];
           this.links.push(newLink);
 
@@ -345,7 +363,7 @@ export default class Tree {
 
       // this.applyEffect(target, source);
 
-      console.log(this.vueFlow.nodes.value, this.linksWithType);
+      console.log(toRaw(this.vueFlow.nodes.value));
       return true;
     } catch (e) {
       console.log(e, this.links, { target, source });
@@ -379,58 +397,65 @@ export default class Tree {
     this.linksWithType.splice(linkIndex, 1);
 
     // if upper nodes has more than one
-    if (upwardNodes.length > 1) {
-      this.links.push(upwardNodes);
-      const firstNode = upwardNodes[0];
 
-      if (this._onApply) {
-        this._onApply(firstNode, upwardNodes[upwardNodes.length - 1]);
-      }
+    const firstNode = upwardNodes[0];
 
+    if (this._onApply) {
+      this._onApply(firstNode, upwardNodes[upwardNodes.length - 1]);
+    }
+
+    if (this._onRemove) {
+      this._onRemove(firstNode, lastNode);
+    }
+
+    const l = [];
+    for (const nodeIndex of upwardNodes) {
       if (this._onRemove) {
-        this._onRemove(firstNode, lastNode);
+        this._onRemove(lastNode, nodeIndex);
       }
+      const node = this.vueFlow.findNode(nodeIndex);
+      l.push(node ? node.type : nodeIndex);
+      // remove from references
+      if (!node) continue;
+      const nodeConfig = config.connections[node.type];
+      if (node.data.references) {
+        for (const referenceId of node.data.references) {
+          if (nodeConfig.appliable && !downwardNodes.includes(referenceId)) {
+            continue;
+          }
 
-      const l = [];
-      for (const nodeIndex of upwardNodes) {
-        if (this._onRemove) {
-          this._onRemove(lastNode, nodeIndex);
-        }
-        const node = this.vueFlow.findNode(nodeIndex);
-        l.push(node ? node.type : nodeIndex);
-        // remove from references
-        if (!node) continue;
-        const nodeConfig = data.config.connections[node.type];
-        if (node.data.references) {
-          for (const referenceId of node.data.references) {
-            const referenceNode = this.vueFlow.findNode(referenceId);
-            if (!referenceNode) continue;
-            const referenceNodeConfig =
-              data.config.connections[referenceNode.type];
-            // if reference node type has target node as children
-            if (referenceNodeConfig.children.includes(node.type)) {
-              delete referenceNode.data[node.type][node.id];
+          const referenceNode = this.vueFlow.findNode(referenceId);
+          if (!referenceNode) continue;
+          const referenceNodeConfig = config.connections[referenceNode.type];
+          // if reference node type has target node as children
+          if (referenceNodeConfig.children.includes(node.type)) {
+            delete referenceNode.data[node.type][node.id];
+          } else {
+            delete referenceNode.data[node.type];
+          }
+
+          if (referenceNodeConfig.validate) {
+            referenceNodeConfig.validate(referenceNode);
+          }
+
+          if (nodeConfig.appliable) {
+            if (nodeConfig.children.includes(referenceNode.type)) {
+              delete node.data[referenceNode.type][referenceId];
             } else {
-              delete referenceNode.data[node.type];
+              delete node.data[referenceNode.type];
             }
+          }
 
-            if (nodeConfig.appliable) {
-              if (nodeConfig.children.includes(referenceNode.type)) {
-                delete node.data[referenceNode.type][referenceId];
-              } else {
-                delete node.data[referenceNode.type];
-              }
-            }
+          if (nodeConfig.validate) {
+            nodeConfig.validate(node);
           }
         }
       }
+    }
 
+    if (upwardNodes.length > 1) {
+      this.links.push(upwardNodes);
       this.linksWithType.push(l);
-    } else {
-      // call remove listener for the first node and last node
-      if (this._onRemove) {
-        this._onRemove(upwardNodes[0], lastNode);
-      }
     }
 
     if (downwardNodes.length > 1) {
@@ -445,6 +470,13 @@ export default class Tree {
       for (const nodeIndex of downwardNodes) {
         const node = this.vueFlow.findNode(nodeIndex);
         l.push(node ? node.type : nodeIndex);
+
+        // if (node) {
+        //   const nodeConfig = config.connections[node.type];
+        //   if (nodeConfig.validate) {
+        //     nodeConfig.validate(node);
+        //   }
+        // }
       }
       this.linksWithType.push(l);
     } else {
@@ -467,25 +499,6 @@ export default class Tree {
     const link = links[0];
     const linkIndex = this.links.indexOf(link);
 
-    if (
-      this._canConnect &&
-      !this._canConnect(
-        target,
-        source,
-        {
-          link: link,
-          linkWithType: this.linksWithType[linkIndex],
-        },
-        {
-          link: link,
-          linkWithType: this.linksWithType[linkIndex],
-        },
-        current
-      )
-    ) {
-      return false;
-    }
-
     const nodeIndex = link.indexOf(target) + 1;
 
     // add current in the link
@@ -499,16 +512,7 @@ export default class Tree {
       node ? node.type : current
     );
 
-    if (this._onApply) {
-      const firstNode = link[0];
-
-      const latestNode = link[link.length - 1];
-      this._onApply(latestNode, current);
-
-      if (firstNode !== latestNode) {
-        this._onApply(firstNode, latestNode);
-      }
-    }
+    this.applyEffect(current, source);
 
     console.log(this.vueFlow.nodes.value, this.linksWithType);
 

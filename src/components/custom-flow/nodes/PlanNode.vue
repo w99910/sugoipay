@@ -3,6 +3,7 @@ import { Handle, Position, useVueFlow, type Connection } from '@vue-flow/core'
 import { Frame, ChevronRight } from 'lucide-vue-next';
 import { onMounted, reactive, watch } from 'vue'
 import { NodeResizer } from '@vue-flow/node-resizer'
+import { config, data } from '@/lib/global';
 import common from '@/lib/common';
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/components/ui/collapsible';
 import {
@@ -23,21 +24,30 @@ import {
 
 // import Collisp
 const props = defineProps(['data', 'id'])
-
-const { updateNodeData } = useVueFlow();
-
-const data = reactive({
+const _data = reactive({
     name: props.data.name,
     type: props.data.billing_type ?? 'recurring',
     interval: 'month',
     intervalAmount: 1,
     basePrice: 0,
+    trialDays: null,
 })
 
 onMounted(() => {
+    const { updateNodeData, findNode } = useVueFlow();
     updateNodeData(props.id, {
-        options: data
+        options: _data
     })
+
+    const node = findNode(props.id)
+
+    if (node) {
+        watch(_data, () => {
+            config.connections.plan.validate(node)
+        })
+    }
+
+
 })
 
 console.log('mounted plan node')
@@ -45,16 +55,19 @@ console.log('mounted plan node')
 </script>
 
 <template>
-    <div class="custom-node">
+    <div class="custom-node" :class="{ '!border-red-500': data.errors[id] }">
+        <div v-show="data.errors[id]"
+            class="absolute z-[100] bg-red-500 text-sm px-2 py-1 rounded right-0 -top-2 transform -translate-y-full">{{
+                data.errors[id] }}</div>
         <!-- <span>{{ id }}</span> -->
         <Handle type="source" :position="Position.Top" />
         <!-- <NodeResizer class="rounded-lg" color="transparent" :min-width="common.node.minWidth"
             :min-height="common.node.minHeight" /> -->
-        <div class="flex items-center gap-x-2 bg-[#34a0a4] p-1.5">
-            <div class="p-2 rounded bg-[#47b7bb]">
+        <div class="flex items-center gap-x-2 bg-rose-500 p-1.5">
+            <div class="p-2 rounded bg-rose-400">
                 <Frame :size="common.iconSize" color="white" />
-            </div> <input @focusin="data.isFocus = true" @focusout="data.isFocus = false"
-                class="nodrag font-semibold text-white" type="text" placeholder="Enter plan name" v-model="data.name" />
+            </div> <input class="nodrag font-semibold text-white" type="text" placeholder="Enter plan name"
+                v-model="_data.name" />
         </div>
 
         <div class="flex flex-col gap-y-2 p-2">
@@ -67,20 +80,20 @@ console.log('mounted plan node')
                 </CollapsibleTrigger>
                 <CollapsibleContent class="mt-2 w-full border-t py-2">
                     <div class="w-full flex items-center gap-x-2 justify-between px-2">
-                        <button @click="data.type = 'one-time'"
-                            :class="{ 'bg-gray-700 p-1.5 text-gray-100': data.type === 'one-time' }"
+                        <button @click="_data.type = 'one-time'"
+                            :class="{ 'bg-gray-700 p-1.5 text-gray-100': _data.type === 'one-time' }"
                             class="rounded w-full py-1.5 border">One
                             Time</button>
-                        <button @click="data.type = 'recurring'"
-                            :class="{ 'bg-gray-700 p-1.5  text-gray-100': data.type === 'recurring' }"
+                        <button @click="_data.type = 'recurring'"
+                            :class="{ 'bg-gray-700 p-1.5  text-gray-100': _data.type === 'recurring' }"
                             class="rounded w-full py-1.5 border">Recurring</button>
                     </div>
                     <div class="w-full flex-col gap-y-3 flex gap-x-2 mt-4 px-2">
-                        <div v-show="data.type === 'recurring'" class="flex items-center space-x-2">
+                        <div v-show="_data.type === 'recurring'" class="flex items-center space-x-2">
                             <label class="w-20  text-left">Interval </label>
                             <span class="px-2 mr-2">:</span>
                             <div class="flex items-center gap-x-2">
-                                <NumberField class="max-w-[100px] nodrag " v-model="data.intervalAmount"
+                                <NumberField class="max-w-[100px] nodrag " v-model="_data.intervalAmount"
                                     :default-value="10" :min="1">
                                     <NumberFieldContent>
                                         <NumberFieldDecrement />
@@ -89,7 +102,7 @@ console.log('mounted plan node')
                                     </NumberFieldContent>
                                 </NumberField>
                                 <Select class="p-1 outline-none !focus:ring-0 !focus:outline-none"
-                                    v-model="data.interval">
+                                    v-model="_data.interval">
                                     <SelectTrigger class="w-[180px]">
                                         <SelectValue class="label-input" placeholder="Select interval" />
                                     </SelectTrigger>
@@ -116,7 +129,7 @@ console.log('mounted plan node')
                             <label class="w-20 text-left">Base Price </label>
                             <span class="px-2 mr-2">:</span>
                             <div class="flex">
-                                <NumberField class="w-[200px] max-w-max nodrag" v-model="data.basePrice" :step="0.1"
+                                <NumberField class="max-w-max nodrag" v-model="_data.basePrice" :step="0.1"
                                     :default-value="1" :format-options="{
                                         style: 'currency',
                                         currency: 'USD',
@@ -124,6 +137,20 @@ console.log('mounted plan node')
                                         currencySign: 'accounting',
                                         maximumFractionDigits: 3
                                     }">
+                                    <NumberFieldContent>
+                                        <NumberFieldDecrement />
+                                        <NumberFieldInput class="label-input" />
+                                        <NumberFieldIncrement />
+                                    </NumberFieldContent>
+                                </NumberField>
+                            </div>
+                        </div>
+                        <div v-show="_data.type === 'recurring'" class="flex items-center space-x-2 w-full">
+                            <label class="w-20  text-left">Trial Days </label>
+                            <span class="px-2 mr-2">:</span>
+                            <div class="flex items-center gap-x-2">
+                                <NumberField class="max-w-full nodrag " v-model="_data.trialDays" :default-value="0"
+                                    :min="0">
                                     <NumberFieldContent>
                                         <NumberFieldDecrement />
                                         <NumberFieldInput class="label-input" />

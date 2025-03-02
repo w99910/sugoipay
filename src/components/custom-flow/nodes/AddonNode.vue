@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Handle, Position, } from '@vue-flow/core'
 import { DiamondPlus, ChevronRight } from 'lucide-vue-next';
-import { onMounted, reactive, ref } from 'vue';
+import { onMounted, reactive, watch } from 'vue';
 import { useVueFlow } from '@vue-flow/core';
 import { NodeResizer } from '@vue-flow/node-resizer'
 import common from '@/lib/common';
@@ -21,6 +21,7 @@ import {
     NumberFieldIncrement,
     NumberFieldInput,
 } from '@/components/ui/number-field'
+import { config } from '@/lib/global';
 // import Collisp
 const props = defineProps(['data', 'id'])
 
@@ -34,10 +35,18 @@ const _data = reactive({
 
 
 onMounted(() => {
-    const { updateNodeData } = useVueFlow();
+    const { updateNodeData, findNode } = useVueFlow();
     updateNodeData(props.id, {
         options: _data
     })
+
+    const node = findNode(props.id)
+
+    if (node) {
+        watch(() => _data, () => {
+            config.connections.addon.validate(node)
+        })
+    }
 })
 
 
@@ -50,8 +59,8 @@ onMounted(() => {
         <Handle type="source" :position="Position.Top" />
         <!-- <NodeResizer class="rounded-lg" color="transparent" :min-width="common.node.minWidth"
             :min-height="common.node.minHeight" /> -->
-        <div class="flex items-center gap-x-2 bg-[#7ed165] p-1.5">
-            <div class="p-2 rounded bg-[#9ae08e]">
+        <div class="flex items-center gap-x-2 bg-purple-500 p-1.5">
+            <div class="p-2 rounded bg-purple-400">
                 <DiamondPlus :size="common.iconSize" color="white" />
             </div> <input class="nodrag font-semibold text-white" type="text" placeholder="Enter addon name"
                 v-model="_data.name" />

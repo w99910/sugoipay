@@ -13,12 +13,13 @@ import DropzoneBackground from '@/components/custom-flow/DropzoneBackground.vue'
 import FeatureCondition from './nodes/FeatureCondition.vue'
 import common from '@/lib/common'
 import ConfirmationDialog from '../ui/alert-dialog/ConfirmationDialog.vue'
-import ChargeSpecificAmountAtEachCondition from './nodes/ChargeSpecificAmountAtEachCondition.vue'
+import ChargeSpecificAmountAtEachCondition from './nodes/ChargeSpecifiedAmountAtEachCondition.vue'
 import ExplainNode from './nodes/ExplainNode.vue'
 import AdjustAmount from './nodes/AdjustAmount.vue'
 import LetCustomerSelectQuantity from './nodes/LetCustomerSelectQuantity.vue'
 import { toast } from 'vue-sonner'
 import Tree from '@/lib/tree'
+import LimitRequests from './nodes/LimitRequests.vue'
 const { onDragOver, onDragLeave, isDragOver } = useDragAndDrop()
 
 const vueFlow = useVueFlow();
@@ -78,7 +79,8 @@ const nodeTypes = {
     chargeSpecificAmountAtEachCondition: markRaw(ChargeSpecificAmountAtEachCondition),
     explain: markRaw(ExplainNode),
     adjustAmount: markRaw(AdjustAmount),
-    letCustomerSelectQuantity: markRaw(LetCustomerSelectQuantity)
+    letCustomerSelectQuantity: markRaw(LetCustomerSelectQuantity),
+    limitRequests: markRaw(LimitRequests),
 } as any
 
 const _onConnect = (connection: Connection) => {
@@ -194,12 +196,12 @@ onNodeDragStop((drag) => {
                     continue;
                 }
 
-                if (!tree.canConnect(sourceNode, drag.node)) {
+                if (!tree.canConnect(sourceNode, drag.node, true)) {
                     toast.warning('Node is not allowed to connect.')
                     continue;
                 }
 
-                if (!common.canConnect(drag.node, targetNode)) {
+                if (!tree.canConnect(drag.node, targetNode, true)) {
                     toast.warning('Node is not allowed to connect.')
                     continue;
                 }

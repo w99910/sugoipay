@@ -16,11 +16,11 @@ console.log('mounted explain node')
 
 <template>
     <div class="custom-node">
-        <span>{{ id }}</span>
-        <div class="flex items-center gap-x-2 bg-gray-100 p-1.5">
-            <div class="p-2 rounded bg-[#f79d65]">
+        <!-- <span>{{ id }}</span> -->
+        <div class="flex items-center gap-x-2 bg-teal-700 p-1.5">
+            <div class="p-2 rounded bg-teal-500">
                 <Text :size="common.iconSize" color="white" />
-            </div> <span class="text-[#f79d65] font-semibold text-sm pr-2">Explain</span>
+            </div> <span class="text-white font-semibold text-sm pr-2">Explain</span>
         </div>
         <Handle type="target" :position="Position.Bottom" />
     </div>

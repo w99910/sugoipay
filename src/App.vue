@@ -174,7 +174,7 @@ const mode = useColorMode()
                     <MenubarItem @select="addNode('addon')">New Addon</MenubarItem>
                     <MenubarSeparator />
                     <MenubarItem @select="addNode('feature')">New Feature</MenubarItem>
-                    <MenubarSeparator />
+                    <!-- <MenubarSeparator /> -->
                   </MenubarSubContent>
                 </MenubarSub>
                 <MenubarSub>
@@ -183,6 +183,17 @@ const mode = useColorMode()
                     <MenubarItem @select="addNode('featureCondition')">Feature Condition</MenubarItem>
                     <MenubarSeparator />
                     <MenubarItem @select="addNode('setMeteredFeature')">Set Metered Feature</MenubarItem>
+                    <MenubarSeparator />
+                    <MenubarItem @select="addNode('chargeSpecificAmountAtEachCondition')">Charge Specified Amount At
+                      Each Condition</MenubarItem>
+                    <MenubarSeparator />
+                    <MenubarItem @select="addNode('adjustAmount')">Adjust Amount</MenubarItem>
+                    <MenubarSeparator />
+                    <MenubarItem @select="addNode('letCustomerSelectQuantity')">Let Customer Select Quantity
+                    </MenubarItem>
+                    <MenubarSeparator />
+                    <MenubarItem @select="addNode('limitRequests')">Limit Requests
+                    </MenubarItem>
                   </MenubarSubContent>
                 </MenubarSub>
               </MenubarContent>

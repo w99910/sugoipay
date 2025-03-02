@@ -32,8 +32,8 @@ onMounted(() => {
     <div class="custom-node">
         <!-- <span>{{ id }}</span> -->
         <Handle type="source" :position="Position.Top" />
-        <div class="flex items-center gap-x-2 bg-[#3753d1] p-1.5">
-            <div class="p-2 rounded bg-[#506ff8]">
+        <div class="flex items-center gap-x-2 bg-blue-600 p-1.5">
+            <div class="p-2 rounded bg-blue-500">
                 <UserRoundPen :size="common.iconSize" color="white" />
             </div> <span class="text-white font-semibold text-sm pr-2">Let Customer Select Quantity</span>
         </div>
