@@ -8,7 +8,7 @@ import common from '@/lib/common';
 const props = defineProps(['data', 'type', 'label', 'id'])
 
 const data = reactive({
-    name: props.data.name
+    name: props.data.options?.name
 })
 
 onMounted(() => {
@@ -31,7 +31,7 @@ console.log('mounted product node')
         <div class="flex items-center gap-x-2 bg-orange-500 p-1.5">
             <div class="p-2 rounded bg-orange-400">
                 <LayoutGrid :size="common.iconSize" color="white" />
-            </div> <input class="nodrag font-semibold text-white" type="text" placeholder="Enter product name"
+            </div> <input class="nodrag font-semibold text-white " type="text" placeholder="Enter product name"
                 v-model="data.name" />
         </div>
         <Handle type="target" :position="Position.Bottom" />

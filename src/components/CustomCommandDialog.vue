@@ -152,7 +152,7 @@ onMounted(() => {
 
         if (clickCount === 2) {
             event = e;
-            if (data.selectedNodes.length === 0) {
+            if (getSelectedNodes.value.length === 0) {
                 data.openCommandDialog = true;
             }
             clickCount = 0;
@@ -173,13 +173,7 @@ onMounted(() => {
     <CommandDialog v-model:open="data.openCommandDialog">
         <CommandInput placeholder="Search node name..." />
         <CommandList class="overflow-hidden">
-            <CommandEmpty>No results found.</CommandEmpty>
-            <CommandGroup heading="Recent Nodes">
-                <CommandItem @select="select" class="capitalize" v-for="recent in data.recent" :value="recent">
-                    {{ recent }}
-                </CommandItem>
-            </CommandGroup>
-            <CommandSeparator />
+            <CommandEmpty>No nodes found.</CommandEmpty>
             <CommandGroup heading="All Nodes">
                 <CommandItem @select="select" class="capitalize" :value="node"
                     v-for="node in Object.keys(config.connections)">

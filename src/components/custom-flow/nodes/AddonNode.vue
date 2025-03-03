@@ -67,7 +67,7 @@ onMounted(() => {
         </div>
         <div class="flex flex-col gap-y-2 p-2">
             <Collapsible class="group/collapsible text-sm text-gray-500 p-2 border rounded flex items-start flex-col">
-                <CollapsibleTrigger class="flex  justify-between items-center w-full">
+                <CollapsibleTrigger class="flex dark:text-white text-black justify-between items-center w-full">
                     Billing
                     <ChevronRight :size="16"
                         class="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
@@ -143,7 +143,7 @@ onMounted(() => {
                 </CollapsibleContent>
             </Collapsible>
             <Collapsible class="group/collapsible text-sm text-gray-500 p-2 border rounded flex items-start flex-col">
-                <CollapsibleTrigger class="flex  justify-between items-center w-full">
+                <CollapsibleTrigger class="flex dark:text-white text-black  justify-between items-center w-full">
                     Features
                     <ChevronRight :size="16"
                         class="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />

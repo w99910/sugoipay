@@ -12,27 +12,34 @@ import {
 } from "@/components/ui/sidebar"
 import SearchNodes from "./custom-flow/SearchNodes.vue";
 
+import { Skeleton } from '@/components/ui/skeleton'
+
 // Menu items.
 const items = [
     {
-        title: "Home",
-        url: "#",
-        icon: Home,
+        id: '',
+        name: '',
+        type: '',
     },
     {
-        title: "Inbox",
-        url: "#",
-        icon: Inbox,
+        id: '',
+        name: '',
+        type: '',
     },
     {
-        title: "Calendar",
-        url: "#",
-        icon: Calendar,
+        id: '',
+        name: '',
+        type: '',
     },
     {
-        title: "Settings",
-        url: "#",
-        icon: Settings,
+        id: '',
+        name: '',
+        type: '',
+    },
+    {
+        id: '',
+        name: '',
+        type: '',
     },
 ];
 </script>
@@ -44,13 +51,10 @@ const items = [
                 <SidebarGroupLabel>SugoiPay</SidebarGroupLabel>
                 <SidebarGroupContent>
                     <SearchNodes class="my-2 w-full" />
-                    <SidebarMenu>
-                        <SidebarMenuItem v-for="item in items" :key="item.title">
+                    <SidebarMenu class="gap-y-3 mt-4">
+                        <SidebarMenuItem v-for="item in items" :key="item.id">
                             <SidebarMenuButton asChild>
-                                <div>
-                                    <component :is="item.icon" />
-                                    <span>{{ item.title }}</span>
-                                </div>
+                                <Skeleton class="w-full h-12" />
                             </SidebarMenuButton>
                         </SidebarMenuItem>
                     </SidebarMenu>

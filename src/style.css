@@ -34,6 +34,13 @@ body,
 .vue-flow__minimap {
   transform: scale(75%);
   transform-origin: bottom right;
+  border: 0.5px solid #dadada;
+  background-color: #fafafa;
+}
+
+.dark .vue-flow__minimap {
+  background-color: hsl(240 5.9% 10%);
+  border-color: #323232;
 }
 
 .vue-flow__node {
@@ -312,7 +319,7 @@ body,
 
 
   input {
-      @apply bg-transparent;
+      @apply bg-transparent placeholder-white;
     /* @apply w-32; */
   }
 

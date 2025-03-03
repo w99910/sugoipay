@@ -24,8 +24,8 @@ const props = defineProps(['data', 'id'])
 const { updateNodeData } = useVueFlow();
 
 const _data = reactive({
-    limit: 60,
-    interval: 'minute'
+    limit: props.data.options?.limit ?? 60,
+    interval: props.data.options?.interval ?? 'minute'
 })
 
 

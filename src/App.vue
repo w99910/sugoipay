@@ -41,6 +41,7 @@ import common from './lib/common'
 import Button from './components/ui/button/Button.vue';
 import Tree from './lib/tree';
 import CustomCommandDialog from './components/CustomCommandDialog.vue';
+import helper from './lib/helper';
 
 const { onConnect, addEdges, addNodes, onNodeDragStop, getEdges, onNodeDragStart, onPaneContextMenu } = useVueFlow()
 
@@ -158,7 +159,7 @@ const mode = useColorMode()
             </Button>
           </div>
         </template>
-        <template #panel-left>
+        <template #panel-left="{ vueFlow }">
           <SidebarTrigger />
           <Menubar>
             <MenubarMenu>
@@ -206,12 +207,12 @@ const mode = useColorMode()
               </MenubarTrigger>
             </MenubarMenu>
             <MenubarMenu>
-              <MenubarTrigger class="gap-x-1">
-                Import
+              <MenubarTrigger @click="helper.import(vueFlow)" class="gap-x-1">
+                Import <input type="file" id="fileInput" style="display: none;" accept="application/json" />
               </MenubarTrigger>
             </MenubarMenu>
             <MenubarMenu>
-              <MenubarTrigger class="gap-x-1">
+              <MenubarTrigger @click="helper.exportAsJson(vueFlow)" class="gap-x-1">
                 Export
               </MenubarTrigger>
             </MenubarMenu>

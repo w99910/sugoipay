@@ -26,12 +26,13 @@ const { updateNodeData, findNode } = useVueFlow();
 // import Collisp
 const props = defineProps(['data', 'id'])
 const _data = reactive({
-    name: props.data.name,
-    type: props.data.billing_type ?? 'recurring',
-    interval: 'month',
-    intervalAmount: 1,
-    basePrice: 0,
-    trialDays: null,
+    name: props.data.options?.name,
+    type: props.data.options?.billing_type ?? 'recurring',
+    interval: props.data.options?.interval ?? 'month',
+    intervalAmount: props.data.options?.intervalAmount ?? 1,
+    basePrice: props.data.options?.basePrice ?? 0,
+    trialCount: props.data.options?.trialCount,
+    trialInterval: props.data.options?.trialInterval ?? 'day',
 })
 
 const node = findNode(props.id)
@@ -79,7 +80,7 @@ console.log('mounted plan node')
         <div class="flex flex-col gap-y-2 p-2">
 
             <Collapsible defaultOpen class="group/collapsible">
-                <CollapsibleTrigger class="flex text-white  justify-between items-center w-full">
+                <CollapsibleTrigger class="flex dark:text-white text-black  justify-between items-center w-full">
                     Billing
                     <ChevronRight :size="16"
                         class="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
@@ -109,7 +110,7 @@ console.log('mounted plan node')
                                 </NumberField>
                                 <Select class="p-1 outline-none !focus:ring-0 !focus:outline-none"
                                     v-model="_data.interval">
-                                    <SelectTrigger class="w-[180px]">
+                                    <SelectTrigger class="w-[160px]">
                                         <SelectValue class="label-input" placeholder="Select interval" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -135,8 +136,8 @@ console.log('mounted plan node')
                             <label class="w-20 text-left">Base Price </label>
                             <span class="px-2 mr-2">:</span>
                             <div class="flex">
-                                <NumberField class="max-w-max nodrag" v-model="_data.basePrice" :step="0.1"
-                                    :default-value="1" :format-options="{
+                                <NumberField class=" nodrag" v-model="_data.basePrice" :step="0.1" :default-value="1"
+                                    :format-options="{
                                         style: 'currency',
                                         currency: 'USD',
                                         currencyDisplay: 'code',
@@ -155,7 +156,7 @@ console.log('mounted plan node')
                             <label class="w-20  text-left">Trial Days </label>
                             <span class="px-2 mr-2">:</span>
                             <div class="flex items-center gap-x-2">
-                                <NumberField class="max-w-full nodrag " v-model="_data.trialDays" :default-value="0"
+                                <NumberField class="max-w-[100px] nodrag " v-model="_data.trialCount" :default-value="0"
                                     :min="0">
                                     <NumberFieldContent>
                                         <NumberFieldDecrement />
@@ -163,13 +164,35 @@ console.log('mounted plan node')
                                         <NumberFieldIncrement />
                                     </NumberFieldContent>
                                 </NumberField>
+                                <Select class="p-1 outline-none !focus:ring-0 !focus:outline-none"
+                                    v-model="_data.trialInterval">
+                                    <SelectTrigger class="w-[160px]">
+                                        <SelectValue class="label-input" placeholder="Select interval" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            <SelectItem value="day">
+                                                Day
+                                            </SelectItem>
+                                            <SelectItem value="week">
+                                                Week
+                                            </SelectItem>
+                                            <SelectItem value="month">
+                                                Month
+                                            </SelectItem>
+                                            <SelectItem value="year">
+                                                Year
+                                            </SelectItem>
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
                             </div>
                         </div>
                     </div>
                 </CollapsibleContent>
             </Collapsible>
             <Collapsible class="group/collapsible text-sm text-gray-500 border rounded flex items-start flex-col">
-                <CollapsibleTrigger class="flex justify-between text-white items-center w-full">
+                <CollapsibleTrigger class="flex justify-between dark:text-white text-black items-center w-full">
                     Features
                     <ChevronRight :size="16"
                         class="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />

@@ -21,6 +21,7 @@ import { toast } from 'vue-sonner'
 import Tree from '@/lib/tree'
 import LimitRequests from './nodes/LimitRequests.vue'
 import { data } from '@/lib/global'
+import { useColorMode } from '@vueuse/core'
 const { onDragOver, onDragLeave, isDragOver } = useDragAndDrop()
 
 const vueFlow = useVueFlow();
@@ -248,6 +249,8 @@ onMounted(() => {
     })
 })
 
+const mode = useColorMode();
+
 </script>
 
 <template>
@@ -255,12 +258,13 @@ onMounted(() => {
         :connection-mode="ConnectionMode.Strict" :nodeTypes="nodeTypes" :nodes="common.data.nodes"
         :edges="common.data.edges" @dragover="onDragOver" @dragleave="onDragLeave" fit-view-on-init :default-zoom="1.5"
         :min-zoom="0.2" :max-zoom="4">
-        <MiniMap />
+        <MiniMap :node-color="mode === 'light' ? '#dadada' : 'rgba(10,10,10,1)'"
+            :mask-color="mode === 'light' ? '#fafafa' : 'hsl(240 5.9% 10%)'" />
         <Panel position="top-left" class="flex items-center gap-x-4">
-            <slot name="panel-left"></slot>
+            <slot :vue-flow="vueFlow" name="panel-left"></slot>
         </Panel>
         <Panel position="top-right" class="flex items-center gap-x-4">
-            <slot name="panel-right"></slot>
+            <slot :vue-flow="vueFlow" name="panel-right"></slot>
 
         </Panel>
         <Controls />

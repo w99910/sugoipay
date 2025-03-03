@@ -23,8 +23,8 @@ const props = defineProps(['data', 'id'])
 
 const { updateNodeData, getNodes } = useVueFlow();
 const data = reactive({
-    divideBy: props.data.divideBy ?? 1,
-    round: props.data.round ?? 'up'
+    divideBy: props.data.options?.divideBy ?? 1,
+    round: props.data.options?.round ?? 'up'
 })
 
 onMounted(() => {

@@ -17,10 +17,10 @@ import { config, data } from '@/lib/global';
 const props = defineProps(['data', 'id'])
 
 const _data = reactive({
-    name: props.data.name,
-    total: 100,
-    type: props.data.type ?? 'ability',
-    description: '',
+    name: props.data.options?.name,
+    total: props.data.options?.total ?? 100,
+    type: props.data.options?.type ?? 'ability',
+    description: props.data.options?.description ?? '',
 
 })
 
@@ -55,8 +55,8 @@ console.log('mounted feature node')
                 data.errors[id] }}</div>
         <!-- <NodeResizer class="rounded-lg" color="transparent" :min-width="common.node.minWidth"
             :min-height="common.node.minHeight" /> -->
-        <div class="flex items-center gap-x-2 bg-teal-700 p-1.5">
-            <div class="p-2 rounded bg-teal-500">
+        <div class="flex items-center gap-x-2 bg-teal-500 p-1.5">
+            <div class="p-2 rounded bg-teal-400">
                 <Shield :size="common.iconSize" color="white" />
             </div> <input class="nodrag font-semibold text-white" type="text" placeholder="Enter feature name"
                 v-model="_data.name" />

@@ -1,0 +1,23 @@
+{
+    "flat-rate": {
+        "nodes": [],
+        "edges": []
+    },
+    "per-seat": {
+        "nodes": [],
+        "edges": []
+    },
+    "tierd": {
+        "nodes": [],
+        "edges": []
+    },"usage": {
+        "nodes": [],
+        "edges": []
+    },"hybrid": {
+        "nodes": [],
+        "edges": []
+    },"free-trial": {
+        "nodes": [],
+        "edges": []
+    }
+}
