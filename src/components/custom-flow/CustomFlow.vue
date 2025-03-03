@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { markRaw, onMounted, watch } from 'vue'
+import { markRaw, onMounted, ref } from 'vue'
 import useDragAndDrop from '@/useDnD'
 import { Controls } from '@vue-flow/controls'
 import { MiniMap } from '@vue-flow/minimap'
@@ -20,10 +20,11 @@ import LetCustomerSelectQuantity from './nodes/LetCustomerSelectQuantity.vue'
 import { toast } from 'vue-sonner'
 import Tree from '@/lib/tree'
 import LimitRequests from './nodes/LimitRequests.vue'
+import { data } from '@/lib/global'
 const { onDragOver, onDragLeave, isDragOver } = useDragAndDrop()
 
 const vueFlow = useVueFlow();
-const { onConnect, addEdges, onInit, onNodeDragStop, findEdge, findNode, onNodesChange, applyNodeChanges, onEdgesChange, applyEdgeChanges, } = vueFlow;
+const { onConnect, getSelectedNodes, onPaneClick, onNodeClick, addEdges, onInit, onNodeDragStop, findEdge, findNode, onNodesChange, applyNodeChanges, onEdgesChange, applyEdgeChanges, } = vueFlow;
 
 let tree: Tree;
 onNodesChange(async (changes: any) => {
@@ -84,20 +85,6 @@ const nodeTypes = {
 } as any
 
 const _onConnect = (connection: Connection) => {
-    const sourceNode = findNode(connection.source);
-    const targetNode = findNode(connection.target);
-    if (!sourceNode || !targetNode) {
-        return;
-    }
-
-    // if (!common.canConnect(sourceNode, targetNode)) {
-    //     toast.warning('Node is not allowed to connect.')
-    //     return;
-    // }
-
-    // common.applyEffect(vueFlow, targetNode, sourceNode);
-
-    // if source node is parent node,
     addEdges(connection)
 }
 onConnect(_onConnect)
@@ -197,12 +184,12 @@ onNodeDragStop((drag) => {
                 }
 
                 if (!tree.canConnect(sourceNode, drag.node, true)) {
-                    toast.warning('Node is not allowed to connect.')
+                    toast.warning('sourceNode, drag Node is not allowed to connect.')
                     continue;
                 }
 
                 if (!tree.canConnect(drag.node, targetNode, true)) {
-                    toast.warning('Node is not allowed to connect.')
+                    toast.warning('drag, target Node is not allowed to connect.')
                     continue;
                 }
 
@@ -264,9 +251,10 @@ onMounted(() => {
 </script>
 
 <template>
-    <VueFlow :connection-radius="60" :apply-default="false" :connection-mode="ConnectionMode.Strict"
-        :nodeTypes="nodeTypes" :nodes="common.data.nodes" :edges="common.data.edges" @dragover="onDragOver"
-        @dragleave="onDragLeave" fit-view-on-init :default-zoom="1.5" :min-zoom="0.2" :max-zoom="4">
+    <VueFlow :zoom-on-double-click="false" :connect-on-click="true" :connection-radius="60" :apply-default="false"
+        :connection-mode="ConnectionMode.Strict" :nodeTypes="nodeTypes" :nodes="common.data.nodes"
+        :edges="common.data.edges" @dragover="onDragOver" @dragleave="onDragLeave" fit-view-on-init :default-zoom="1.5"
+        :min-zoom="0.2" :max-zoom="4">
         <MiniMap />
         <Panel position="top-left" class="flex items-center gap-x-4">
             <slot name="panel-left"></slot>

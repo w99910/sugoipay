@@ -1,8 +1,14 @@
-import type { GraphNode } from "@vue-flow/core";
-import { reactive } from "vue";
+import type { GraphEdge, GraphNode } from "@vue-flow/core";
+import { reactive, type Ref, ref } from "vue";
 export const data = reactive({
   errors: {} as { [key: string]: string | null },
+  openCommandDialog: false,
+  recent: ["feature", "featureCondition", "plan"],
+  copiedNodes: [] as GraphNode[],
+  copiedEdges: [] as GraphEdge[],
 });
+
+export const mouseEvent: Ref<MouseEvent | PointerEvent | null> = ref(null);
 
 export const config = {
   connections: {
@@ -86,6 +92,7 @@ export const config = {
         "letCustomerSelectQuantity",
         "limitRequests",
       ],
+      allowMultipleConnections: true,
       appliable: true,
       children: ["featureCondition"],
       validate: function (node: GraphNode) {
@@ -172,6 +179,7 @@ export const config = {
         "addon",
         "adjustAmount",
         "feature",
+        "featureCondition",
         "chargeSpecificAmountAtEachCondition",
       ],
     },

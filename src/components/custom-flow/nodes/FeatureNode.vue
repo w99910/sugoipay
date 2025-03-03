@@ -55,8 +55,8 @@ console.log('mounted feature node')
                 data.errors[id] }}</div>
         <!-- <NodeResizer class="rounded-lg" color="transparent" :min-width="common.node.minWidth"
             :min-height="common.node.minHeight" /> -->
-        <div class="flex items-center gap-x-2 bg-indigo-500 p-1.5">
-            <div class="p-2 rounded bg-indigo-400">
+        <div class="flex items-center gap-x-2 bg-teal-700 p-1.5">
+            <div class="p-2 rounded bg-teal-500">
                 <Shield :size="common.iconSize" color="white" />
             </div> <input class="nodrag font-semibold text-white" type="text" placeholder="Enter feature name"
                 v-model="_data.name" />

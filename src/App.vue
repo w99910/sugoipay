@@ -40,6 +40,7 @@ import CustomFlow from './components/custom-flow/CustomFlow.vue'
 import common from './lib/common'
 import Button from './components/ui/button/Button.vue';
 import Tree from './lib/tree';
+import CustomCommandDialog from './components/CustomCommandDialog.vue';
 
 const { onConnect, addEdges, addNodes, onNodeDragStop, getEdges, onNodeDragStart, onPaneContextMenu } = useVueFlow()
 
@@ -218,6 +219,7 @@ const mode = useColorMode()
         </template>
       </CustomFlow>
       <Toaster />
+      <CustomCommandDialog />
     </main>
   </SidebarProvider>
 </template>

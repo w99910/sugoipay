@@ -21,6 +21,7 @@ import {
     NumberFieldIncrement,
     NumberFieldInput,
 } from '@/components/ui/number-field'
+const { updateNodeData, findNode } = useVueFlow();
 
 // import Collisp
 const props = defineProps(['data', 'id'])
@@ -33,17 +34,22 @@ const _data = reactive({
     trialDays: null,
 })
 
+const node = findNode(props.id)
+
+
 onMounted(() => {
-    const { updateNodeData, findNode } = useVueFlow();
     updateNodeData(props.id, {
         options: _data
     })
 
-    const node = findNode(props.id)
 
     if (node) {
         watch(_data, () => {
             config.connections.plan.validate(node)
+        })
+
+        watch(() => node, () => {
+            console.log('change')
         })
     }
 
@@ -73,7 +79,7 @@ console.log('mounted plan node')
         <div class="flex flex-col gap-y-2 p-2">
 
             <Collapsible defaultOpen class="group/collapsible">
-                <CollapsibleTrigger class="flex  justify-between items-center w-full">
+                <CollapsibleTrigger class="flex text-white  justify-between items-center w-full">
                     Billing
                     <ChevronRight :size="16"
                         class="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
@@ -162,15 +168,17 @@ console.log('mounted plan node')
                     </div>
                 </CollapsibleContent>
             </Collapsible>
-            <Collapsible class="group/collapsible text-sm text-gray-500 p-2 border rounded flex items-start flex-col">
-                <CollapsibleTrigger class="flex  justify-between items-center w-full">
+            <Collapsible class="group/collapsible text-sm text-gray-500 border rounded flex items-start flex-col">
+                <CollapsibleTrigger class="flex justify-between text-white items-center w-full">
                     Features
                     <ChevronRight :size="16"
                         class="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
                 </CollapsibleTrigger>
-                <CollapsibleContent class="mt-2">
-                    <div>
-                        Hello world
+                <CollapsibleContent class="gap-y-2 mt-2 w-full">
+                    <div class="flex flex-col border-t items-start gap-y-1 py-2"
+                        v-for="featureId in Object.keys(node?.data.feature)">
+                        <h1 class="font-semibold">{{ node?.data.feature[featureId].options.name }}</h1>
+                        <span class="text-xs">{{ node?.data.feature[featureId].options.description }}</span>
                     </div>
                 </CollapsibleContent>
             </Collapsible>

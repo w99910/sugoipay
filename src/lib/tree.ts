@@ -211,17 +211,23 @@ export default class Tree {
     if (!targetNode || !sourceNode) return false;
 
     const targetConfig = config.connections[targetNode.type];
+    const sourceConfig = config.connections[sourceNode.type];
     const existingEdges = this.edges.value;
 
     if (
       !isBetween &&
-      !targetConfig.allowMultipleConnections &&
       existingEdges.some(
-        (edge) => edge.source === sourceNode.id || edge.target === targetNode.id
+        (edge) =>
+          (!sourceConfig.allowMultipleConnections &&
+            edge.source === sourceNode.id) ||
+          (!targetConfig.allowMultipleConnections &&
+            edge.target === targetNode.id)
       )
     ) {
       return false;
     }
+
+    console.log(targetConfig.connectable, sourceNode.type);
 
     if (!targetConfig.connectable.includes(sourceNode.type)) {
       return false;
