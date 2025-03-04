@@ -118,8 +118,8 @@ export const config = {
           "references",
           "options",
           "limitRequests",
+          "letCustomerSelectQuantity",
         ];
-        console.log("validate", node.data.options.type, Object.keys(node.data));
         if (
           node.data.options.type === "ability" &&
           Object.keys(node.data).some(

@@ -25,24 +25,6 @@ onMounted(() => {
     vueFlow.updateNodeData(props.id, {
         options: data
     })
-
-    watch(data, (_) => {
-
-        const edges = common.data.edges.filter(({ target }) => target === props.id);
-
-        if (edges.length > 0) {
-            const node = vueFlow.findNode(props.id);
-            if (!node) return;
-            for (let edge of edges) {
-                const sourceNode = vueFlow.findNode(edge.source);
-                if (!sourceNode) continue;
-
-                // common.applyEffect(vueFlow, node, sourceNode, false)
-            }
-        }
-
-        console.log(vueFlow.getNodes.value)
-    })
 })
 
 console.log('mounted feature condition node')

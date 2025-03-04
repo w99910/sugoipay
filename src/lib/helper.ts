@@ -77,6 +77,8 @@ export default {
               mapNodes[currentNode.toString()] = node.id;
             }
 
+            delete node.data?.options?.references;
+
             vueFlow.addNodes({
               id: mapNodes[currentNode.toString()],
               position: node.position,

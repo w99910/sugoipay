@@ -15,9 +15,7 @@ import { useVueFlow } from '@vue-flow/core';
 const props = defineProps(['data', 'id'])
 
 const data = reactive({
-    minimum: 0,
-    maximum: -1,
-    perUnit: 0,
+    perUnit: props.data.options?.perUnit ?? 10,
 })
 
 onMounted(() => {
@@ -52,32 +50,6 @@ onMounted(() => {
                         currencySign: 'accounting',
                         maximumFractionDigits: 3
                     }">
-                        <NumberFieldContent>
-                            <NumberFieldDecrement />
-                            <NumberFieldInput class="label-input" />
-                            <NumberFieldIncrement />
-                        </NumberFieldContent>
-                    </NumberField>
-                </div>
-            </div>
-            <div class="flex items-center justify-between w-full">
-                <label class="w-4/12 text-left label-text">Minimum </label>
-                <span class="w-12">:</span>
-                <div class="w-[200px] flex">
-                    <NumberField class="nodrag" v-model="data.minimum" :default-value="10" :min="1">
-                        <NumberFieldContent>
-                            <NumberFieldDecrement />
-                            <NumberFieldInput class="label-input" />
-                            <NumberFieldIncrement />
-                        </NumberFieldContent>
-                    </NumberField>
-                </div>
-            </div>
-            <div class="flex items-center justify-between w-full">
-                <label class="w-4/12 text-left label-text">Maximum </label>
-                <span class="w-12">:</span>
-                <div class="w-[200px] flex">
-                    <NumberField class="nodrag" v-model="data.maximum" :default-value="10" :min="1">
                         <NumberFieldContent>
                             <NumberFieldDecrement />
                             <NumberFieldInput class="label-input" />

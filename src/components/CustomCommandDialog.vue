@@ -31,7 +31,7 @@ function computeCenter(nodesToCopy: GraphNode[]) {
 }
 
 
-const { Meta_J, Ctrl_J, Meta_V, Ctrl_V, Meta_C, Ctrl_C, Meta_S, Ctrl_S } = useMagicKeys({
+const { Meta_J, Ctrl_J, Meta_V, Ctrl_V, Meta_C, Ctrl_C, Meta_S, Ctrl_S, Ctrl_A, Meta_A } = useMagicKeys({
     passive: false,
     onEventFired(e) {
         if (e.key === 'j' && (e.metaKey || e.ctrlKey))
@@ -45,11 +45,14 @@ const { Meta_J, Ctrl_J, Meta_V, Ctrl_V, Meta_C, Ctrl_C, Meta_S, Ctrl_S } = useMa
 
         if (e.key === 's' && (e.metaKey || e.ctrlKey))
             e.preventDefault()
+
+        if (e.key === 'a' && (e.metaKey || e.ctrlKey))
+            e.preventDefault()
     },
 })
 
 const vueFlow = useVueFlow();
-const { onPaneClick, project, addNodes, addEdges, nodes, onPaneMouseMove, getSelectedEdges, getSelectedNodes } = vueFlow;
+const { onPaneClick, project, addSelectedNodes, addNodes, addEdges, nodes, onPaneMouseMove, getSelectedEdges, getSelectedNodes } = vueFlow;
 
 
 watch([Meta_J, Ctrl_J], (v) => {
@@ -62,12 +65,16 @@ watch([Meta_S, Ctrl_S], (v) => {
         helper.save(vueFlow)
 })
 
+watch([Meta_A, Ctrl_A], (v) => {
+    if (v[0] || v[1])
+        // select
+        addSelectedNodes(nodes.value)
+})
+
 watch([Meta_C, Ctrl_C], (v) => {
     if (getSelectedNodes.value.length > 0 && (v[0] || v[1])) {
         data.copiedNodes = getSelectedNodes.value;
         data.copiedEdges = getSelectedEdges.value;
-
-        console.log(data.copiedEdges)
     }
 })
 
@@ -170,19 +177,19 @@ onMounted(() => {
 
     })
 
-    onPaneMouseMove((e) => {
-        if (timeout) clearTimeout(timeout)
-        timeout = setTimeout(() => {
-            mouseEvent.value = e;
-        }, 100)
-    })
+    // onPaneMouseMove((e) => {
+    //     if (timeout) clearTimeout(timeout)
+    //     timeout = setTimeout(() => {
+    //         mouseEvent.value = e;
+    //     }, 100)
+    // })
 })
 </script>
 
 <template>
     <CommandDialog v-model:open="data.openCommandDialog">
         <CommandInput placeholder="Search node name..." />
-        <CommandList class="overflow-hidden">
+        <CommandList>
             <CommandEmpty>No nodes found.</CommandEmpty>
             <CommandGroup heading="All Nodes">
                 <CommandItem @select="select" class="capitalize" :value="node"

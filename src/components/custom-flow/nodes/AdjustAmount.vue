@@ -34,20 +34,6 @@ onMounted(() => {
 
     watch(data, (_) => {
 
-        //     const edges = common.data.edges.filter(({ source, target }) => target === props.id);
-
-        //     if (edges.length > 0) {
-        //         const node = findNode(props.id);
-        //         if (!node) return;
-        //         for (let edge of edges) {
-        //             const sourceNode = findNode(edge.source);
-        //             if (!sourceNode) continue;
-
-        //             common.applyEffect(vuef, node, sourceNode, false)
-        //         }
-        //     }
-
-        console.log(getNodes.value)
     })
 })
 

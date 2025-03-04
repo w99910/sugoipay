@@ -19,8 +19,6 @@ export default class Tree {
   protected _onRemove: null | onNodeUpdateFn = null;
   protected _canApply: null | CanApplyFn = null;
   protected edges;
-  public disable = false;
-
   protected nodes;
 
   static instance() {
@@ -31,7 +29,7 @@ export default class Tree {
     return this.nodes.value;
   }
 
-  constructor(protected vueFlow: VueFlowStore) {
+  constructor(protected vueFlow: VueFlowStore, public disable = false) {
     this.edges = vueFlow.edges;
     this.nodes = vueFlow.nodes;
     this.initialize();
@@ -326,7 +324,7 @@ export default class Tree {
 
           for (let k = topLink.length - 1; k >= 0; k--) {
             const node = topLink[k];
-            console.log("apply effect", node, firstNodeOfBottomLink);
+            // console.log("apply effect", node, firstNodeOfBottomLink);
             this.applyEffect(node, firstNodeOfBottomLink);
           }
 
@@ -434,7 +432,7 @@ export default class Tree {
           if (!referenceNode) continue;
           const referenceNodeConfig = config.connections[referenceNode.type];
           // if reference node type has target node as children
-          if (referenceNodeConfig.children.includes(node.type)) {
+          if (referenceNodeConfig.children?.includes(node.type)) {
             delete referenceNode.data[node.type][node.id];
           } else {
             delete referenceNode.data[node.type];
@@ -445,7 +443,7 @@ export default class Tree {
           }
 
           if (nodeConfig.appliable) {
-            if (nodeConfig.children.includes(referenceNode.type)) {
+            if (nodeConfig.children?.includes(referenceNode.type)) {
               delete node.data[referenceNode.type][referenceId];
             } else {
               delete node.data[referenceNode.type];

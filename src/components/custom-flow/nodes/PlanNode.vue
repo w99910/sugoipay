@@ -48,10 +48,6 @@ onMounted(() => {
         watch(_data, () => {
             config.connections.plan.validate(node)
         })
-
-        watch(() => node, () => {
-            console.log('change')
-        })
     }
 
 

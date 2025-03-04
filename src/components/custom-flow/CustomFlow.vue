@@ -227,34 +227,12 @@ onNodeDragStop((drag) => {
 onMounted(() => {
     onInit(() => {
         const value = localStorage.getItem(key);
-        console.log(value)
         if (value) {
             const flow = JSON.parse(value)
             fromObject(flow)
         }
 
-        tree = new Tree(vueFlow);
-
-        tree.onApply((effectedNode, sourceNode) => {
-            // const _effectedNode = vueFlow.findNode(effectedNode);
-            // const _sourceNode = vueFlow.findNode(sourceNode);
-
-            // if (!_effectedNode || !_sourceNode) return;
-
-            // const parentNodeType = common.connectable[_effectedNode.type].parent;
-
-            // if (_effectedNode.type === parentNodeType) {
-
-            // }
-
-            // console.log('onapply', _effectedNode, _sourceNode)
-        })
-
-        tree.onRemove((effectedNode, sourceNode) => {
-            // const _effectedNode = vueFlow.findNode(effectedNode);
-            // const _sourceNode = vueFlow.findNode(sourceNode);
-            // console.log('onremove', effectedNode, sourceNode, _effectedNode, _sourceNode)
-        })
+        tree = new Tree(vueFlow, true);
     })
 })
 
@@ -264,9 +242,8 @@ const mode = useColorMode();
 
 <template>
     <VueFlow :zoom-on-double-click="false" :connect-on-click="true" :connection-radius="60" :apply-default="false"
-        :connection-mode="ConnectionMode.Strict" :nodeTypes="nodeTypes" :nodes="common.data.nodes"
-        :edges="common.data.edges" @dragover="onDragOver" @dragleave="onDragLeave" fit-view-on-init :default-zoom="1.5"
-        :min-zoom="0.2" :max-zoom="4">
+        :connection-mode="ConnectionMode.Strict" :nodeTypes="nodeTypes" @dragover="onDragOver" @dragleave="onDragLeave"
+        fit-view-on-init :default-zoom="1.5" :min-zoom="0.2" :max-zoom="4">
         <MiniMap :node-color="mode === 'light' ? '#dadada' : 'rgba(10,10,10,1)'"
             :mask-color="mode === 'light' ? '#fafafa' : 'hsl(240 5.9% 10%)'" />
         <Panel position="top-left" class="flex items-center gap-x-4">
