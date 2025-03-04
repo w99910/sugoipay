@@ -17,6 +17,7 @@ const props = defineProps(['data', 'id'])
 const data = reactive({
     minimum: 0,
     maximum: -1,
+    perUnit: 0,
 })
 
 onMounted(() => {
@@ -25,6 +26,8 @@ onMounted(() => {
         options: data
     })
 })
+
+// When feature is set as metered, this node cannot be used
 
 </script>
 
@@ -38,25 +41,50 @@ onMounted(() => {
             </div> <span class="text-white font-semibold text-sm pr-2">Let Customer Select Quantity</span>
         </div>
         <div class="flex flex-col gap-y-4 p-4 items-start">
-            <div class="flex items-center gap-x-2">
-                <span class="label-text">Minimum Quantity </span>
-                <NumberField class="nodrag w-[150px] max-w-max" v-model="data.minimum" :default-value="10" :min="1">
-                    <NumberFieldContent>
-                        <NumberFieldDecrement />
-                        <NumberFieldInput class="label-input" />
-                        <NumberFieldIncrement />
-                    </NumberFieldContent>
-                </NumberField>
+            <div class="flex items-center justify-between w-full">
+                <label class="w-4/12 text-left label-text">Price Per Unit </label>
+                <span class="w-12">:</span>
+                <div class="w-[200px] flex">
+                    <NumberField class="nodrag" v-model="data.perUnit" :step="0.1" :default-value="1" :format-options="{
+                        style: 'currency',
+                        currency: 'USD',
+                        currencyDisplay: 'code',
+                        currencySign: 'accounting',
+                        maximumFractionDigits: 3
+                    }">
+                        <NumberFieldContent>
+                            <NumberFieldDecrement />
+                            <NumberFieldInput class="label-input" />
+                            <NumberFieldIncrement />
+                        </NumberFieldContent>
+                    </NumberField>
+                </div>
             </div>
-            <div class="flex items-center gap-x-2">
-                <span class="label-text">Maximum Quantity </span>
-                <NumberField class="nodrag w-[150px] max-w-max" v-model="data.maximum" :default-value="-1" :min="1">
-                    <NumberFieldContent>
-                        <NumberFieldDecrement />
-                        <NumberFieldInput class="label-input" />
-                        <NumberFieldIncrement />
-                    </NumberFieldContent>
-                </NumberField>
+            <div class="flex items-center justify-between w-full">
+                <label class="w-4/12 text-left label-text">Minimum </label>
+                <span class="w-12">:</span>
+                <div class="w-[200px] flex">
+                    <NumberField class="nodrag" v-model="data.minimum" :default-value="10" :min="1">
+                        <NumberFieldContent>
+                            <NumberFieldDecrement />
+                            <NumberFieldInput class="label-input" />
+                            <NumberFieldIncrement />
+                        </NumberFieldContent>
+                    </NumberField>
+                </div>
+            </div>
+            <div class="flex items-center justify-between w-full">
+                <label class="w-4/12 text-left label-text">Maximum </label>
+                <span class="w-12">:</span>
+                <div class="w-[200px] flex">
+                    <NumberField class="nodrag" v-model="data.maximum" :default-value="10" :min="1">
+                        <NumberFieldContent>
+                            <NumberFieldDecrement />
+                            <NumberFieldInput class="label-input" />
+                            <NumberFieldIncrement />
+                        </NumberFieldContent>
+                    </NumberField>
+                </div>
             </div>
         </div>
 

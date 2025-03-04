@@ -96,10 +96,10 @@ console.log('mounted plan node')
                             class="rounded w-full py-1.5 border">Recurring</button>
                     </div>
                     <div class="w-full flex-col gap-y-3 flex gap-x-2 mt-4 px-2">
-                        <div v-show="_data.type === 'recurring'" class="flex items-center space-x-2">
+                        <div v-show="_data.type === 'recurring'" class="flex items-center justify-between">
                             <label class="w-20  text-left">Interval </label>
-                            <span class="px-2 mr-2">:</span>
-                            <div class="flex items-center gap-x-2">
+                            <span class="w-10">:</span>
+                            <div class="flex w-8/12 items-center gap-x-2">
                                 <NumberField class="max-w-[100px] nodrag " v-model="_data.intervalAmount"
                                     :default-value="10" :min="1">
                                     <NumberFieldContent>
@@ -132,11 +132,11 @@ console.log('mounted plan node')
                                 </Select>
                             </div>
                         </div>
-                        <div class="flex items-center space-x-2">
+                        <div class="flex items-center justify-between">
                             <label class="w-20 text-left">Base Price </label>
-                            <span class="px-2 mr-2">:</span>
-                            <div class="flex">
-                                <NumberField class=" nodrag" v-model="_data.basePrice" :step="0.1" :default-value="1"
+                            <span class="w-10">:</span>
+                            <div class="w-8/12 flex">
+                                <NumberField class="nodrag" v-model="_data.basePrice" :step="0.1" :default-value="1"
                                     :format-options="{
                                         style: 'currency',
                                         currency: 'USD',
@@ -152,10 +152,10 @@ console.log('mounted plan node')
                                 </NumberField>
                             </div>
                         </div>
-                        <div v-show="_data.type === 'recurring'" class="flex items-center space-x-2 w-full">
+                        <div v-show="_data.type === 'recurring'" class="flex items-center w-full justify-between">
                             <label class="w-20  text-left">Trial Days </label>
-                            <span class="px-2 mr-2">:</span>
-                            <div class="flex items-center gap-x-2">
+                            <span class="w-10">:</span>
+                            <div class="flex w-8/12 items-center gap-x-2">
                                 <NumberField class="max-w-[100px] nodrag " v-model="_data.trialCount" :default-value="0"
                                     :min="0">
                                     <NumberFieldContent>

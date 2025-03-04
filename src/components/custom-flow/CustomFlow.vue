@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { markRaw, onMounted, ref } from 'vue'
+import { markRaw, onBeforeMount, onMounted, ref } from 'vue'
 import useDragAndDrop from '@/useDnD'
 import { Controls } from '@vue-flow/controls'
 import { MiniMap } from '@vue-flow/minimap'
@@ -20,12 +20,13 @@ import LetCustomerSelectQuantity from './nodes/LetCustomerSelectQuantity.vue'
 import { toast } from 'vue-sonner'
 import Tree from '@/lib/tree'
 import LimitRequests from './nodes/LimitRequests.vue'
-import { data } from '@/lib/global'
 import { useColorMode } from '@vueuse/core'
+import { key } from '@/lib/helper'
+import PriceNode from './nodes/PriceNode.vue'
 const { onDragOver, onDragLeave, isDragOver } = useDragAndDrop()
 
 const vueFlow = useVueFlow();
-const { onConnect, getSelectedNodes, onPaneClick, onNodeClick, addEdges, onInit, onNodeDragStop, findEdge, findNode, onNodesChange, applyNodeChanges, onEdgesChange, applyEdgeChanges, } = vueFlow;
+const { onConnect, fromObject, getSelectedNodes, onPaneClick, onNodeClick, addEdges, onInit, onNodeDragStop, findEdge, findNode, onNodesChange, applyNodeChanges, onEdgesChange, applyEdgeChanges, } = vueFlow;
 
 let tree: Tree;
 onNodesChange(async (changes: any) => {
@@ -83,6 +84,7 @@ const nodeTypes = {
     adjustAmount: markRaw(AdjustAmount),
     letCustomerSelectQuantity: markRaw(LetCustomerSelectQuantity),
     limitRequests: markRaw(LimitRequests),
+    price: markRaw(PriceNode)
 } as any
 
 const _onConnect = (connection: Connection) => {
@@ -185,12 +187,12 @@ onNodeDragStop((drag) => {
                 }
 
                 if (!tree.canConnect(sourceNode, drag.node, true)) {
-                    toast.warning('sourceNode, drag Node is not allowed to connect.')
+                    toast.warning('Node is not allowed to connect.')
                     continue;
                 }
 
                 if (!tree.canConnect(drag.node, targetNode, true)) {
-                    toast.warning('drag, target Node is not allowed to connect.')
+                    toast.warning('Node is not allowed to connect.')
                     continue;
                 }
 
@@ -224,6 +226,13 @@ onNodeDragStop((drag) => {
 
 onMounted(() => {
     onInit(() => {
+        const value = localStorage.getItem(key);
+        console.log(value)
+        if (value) {
+            const flow = JSON.parse(value)
+            fromObject(flow)
+        }
+
         tree = new Tree(vueFlow);
 
         tree.onApply((effectedNode, sourceNode) => {

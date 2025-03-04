@@ -6,12 +6,27 @@ export const data = reactive({
   recent: ["feature", "featureCondition", "plan"],
   copiedNodes: [] as GraphNode[],
   copiedEdges: [] as GraphEdge[],
+  openInfoDialog: false,
 });
 
 export const mouseEvent: Ref<MouseEvent | PointerEvent | null> = ref(null);
 
 export const config = {
   connections: {
+    price: {
+      connectable: [
+        "feature",
+        "setMeteredFeature",
+        "featureCondition",
+        "adjustAmount",
+        "chargeSpecificAmountAtEachCondition",
+        "letCustomerSelectQuantity",
+        "limitRequests",
+      ],
+      children: ["feature"],
+      appliable: true,
+      allowMultipleConnections: true,
+    },
     product: {
       connectable: ["plan", "addon"],
       children: ["plan", "addon"],

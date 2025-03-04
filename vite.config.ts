@@ -1,8 +1,8 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from "vite";
 import path from "path";
-import vue from '@vitejs/plugin-vue'
-import autoprefixer from 'autoprefixer'
-import tailwind from 'tailwindcss'
+import vue from "@vitejs/plugin-vue";
+import autoprefixer from "autoprefixer";
+import tailwind from "tailwindcss";
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -12,7 +12,7 @@ export default defineConfig({
     },
   },
   plugins: [vue()],
-  server:{
+  server: {
     // open: true,
   },
   resolve: {
@@ -20,4 +20,4 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-})
+});

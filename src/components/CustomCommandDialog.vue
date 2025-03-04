@@ -9,6 +9,7 @@ import {
     CommandSeparator,
 } from '@/components/ui/command'
 import { config, data, mouseEvent } from '@/lib/global'
+import helper from '@/lib/helper'
 import { useVueFlow, type GraphNode } from '@vue-flow/core'
 
 import { useMagicKeys } from '@vueuse/core'
@@ -30,7 +31,7 @@ function computeCenter(nodesToCopy: GraphNode[]) {
 }
 
 
-const { Meta_J, Ctrl_J, Meta_V, Ctrl_V, Meta_C, Ctrl_C } = useMagicKeys({
+const { Meta_J, Ctrl_J, Meta_V, Ctrl_V, Meta_C, Ctrl_C, Meta_S, Ctrl_S } = useMagicKeys({
     passive: false,
     onEventFired(e) {
         if (e.key === 'j' && (e.metaKey || e.ctrlKey))
@@ -41,15 +42,24 @@ const { Meta_J, Ctrl_J, Meta_V, Ctrl_V, Meta_C, Ctrl_C } = useMagicKeys({
 
         if (e.key === 'c' && (e.metaKey || e.ctrlKey))
             e.preventDefault()
+
+        if (e.key === 's' && (e.metaKey || e.ctrlKey))
+            e.preventDefault()
     },
 })
 
-const { onPaneClick, project, addNodes, addEdges, nodes, onPaneMouseMove, getSelectedEdges, getSelectedNodes } = useVueFlow();
+const vueFlow = useVueFlow();
+const { onPaneClick, project, addNodes, addEdges, nodes, onPaneMouseMove, getSelectedEdges, getSelectedNodes } = vueFlow;
 
 
 watch([Meta_J, Ctrl_J], (v) => {
     if (v[0] || v[1])
         handleOpenChange()
+})
+
+watch([Meta_S, Ctrl_S], (v) => {
+    if (v[0] || v[1])
+        helper.save(vueFlow)
 })
 
 watch([Meta_C, Ctrl_C], (v) => {

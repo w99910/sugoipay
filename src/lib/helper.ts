@@ -1,6 +1,15 @@
 import { type VueFlowStore } from "@vue-flow/core";
+import { toast } from "vue-sonner";
+export const key = "sugoipay-flow--save-restore";
 
 export default {
+  save: function (vueFlow: VueFlowStore) {
+    localStorage.setItem(key, JSON.stringify(vueFlow.toObject()));
+
+    if (toast) {
+      toast.success("Successfully saved");
+    }
+  },
   exportAsJson: function (vueFlow: VueFlowStore) {
     const { nodes, edges } = vueFlow;
 

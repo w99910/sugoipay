@@ -53,7 +53,7 @@ onMounted(() => {
 
 console.log('mounted adjust node')
 
-
+// Cannot be combined with tiers. Can be used as metered
 </script>
 
 <template>

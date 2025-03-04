@@ -42,6 +42,9 @@ import Button from './components/ui/button/Button.vue';
 import Tree from './lib/tree';
 import CustomCommandDialog from './components/CustomCommandDialog.vue';
 import helper from './lib/helper';
+import Dock from './components/Dock.vue';
+import InfoDialog from './components/custom-flow/InfoDialog.vue';
+import { data } from './lib/global';
 
 const { onConnect, addEdges, addNodes, onNodeDragStop, getEdges, onNodeDragStart, onPaneContextMenu } = useVueFlow()
 
@@ -154,7 +157,7 @@ const mode = useColorMode()
             <Button :variant="'ghost'" @click="mode = mode === 'light' ? 'dark' : 'light'">
               <Moon :size="common.iconSize" />
             </Button>
-            <Button :variant="'ghost'">
+            <Button :variant="'ghost'" @click="data.openInfoDialog = true">
               <Info :size="common.iconSize" />
             </Button>
           </div>
@@ -176,6 +179,8 @@ const mode = useColorMode()
                     <MenubarItem @select="addNode('addon')">New Addon</MenubarItem>
                     <MenubarSeparator />
                     <MenubarItem @select="addNode('feature')">New Feature</MenubarItem>
+                    <MenubarSeparator />
+                    <MenubarItem @select="addNode('price')">New Price</MenubarItem>
                     <!-- <MenubarSeparator /> -->
                   </MenubarSubContent>
                 </MenubarSub>
@@ -202,7 +207,7 @@ const mode = useColorMode()
             </MenubarMenu>
 
             <MenubarMenu>
-              <MenubarTrigger class="gap-x-1">
+              <MenubarTrigger class="gap-x-1" @click="helper.save(vueFlow)">
                 Save
               </MenubarTrigger>
             </MenubarMenu>
@@ -212,13 +217,21 @@ const mode = useColorMode()
               </MenubarTrigger>
             </MenubarMenu>
             <MenubarMenu>
-              <MenubarTrigger @click="helper.exportAsJson(vueFlow)" class="gap-x-1">
+              <MenubarTrigger class="gap-x-1">
                 Export
               </MenubarTrigger>
+              <MenubarContent>
+                <MenubarItem @click="helper.exportAsJson(vueFlow)">Export As JSON</MenubarItem>
+                <MenubarSeparator />
+                <MenubarItem @select="addNode('letCustomerSelectQuantity')">Export As Code
+                </MenubarItem>
+              </MenubarContent>
             </MenubarMenu>
           </Menubar>
         </template>
       </CustomFlow>
+      <Dock />
+      <InfoDialog />
       <Toaster />
       <CustomCommandDialog />
     </main>
