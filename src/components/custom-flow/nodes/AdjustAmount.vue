@@ -31,10 +31,6 @@ onMounted(() => {
     updateNodeData(props.id, {
         options: data
     })
-
-    watch(data, (_) => {
-
-    })
 })
 
 console.log('mounted adjust node')

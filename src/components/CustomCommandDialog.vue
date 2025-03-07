@@ -177,12 +177,12 @@ onMounted(() => {
 
     })
 
-    // onPaneMouseMove((e) => {
-    //     if (timeout) clearTimeout(timeout)
-    //     timeout = setTimeout(() => {
-    //         mouseEvent.value = e;
-    //     }, 100)
-    // })
+    onPaneMouseMove((e) => {
+        if (timeout) clearTimeout(timeout)
+        timeout = setTimeout(() => {
+            mouseEvent.value = e;
+        }, 100)
+    })
 })
 </script>
 

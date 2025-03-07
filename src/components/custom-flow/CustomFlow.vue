@@ -232,7 +232,7 @@ onMounted(() => {
             fromObject(flow)
         }
 
-        tree = new Tree(vueFlow, true);
+        tree = new Tree(vueFlow);
     })
 })
 

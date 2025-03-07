@@ -73,7 +73,7 @@ console.log('mounted explain node')
                 <Text :size="common.iconSize" color="white" />
             </div> <span class="text-white font-semibold text-sm pr-2">Explain</span>
         </div>
-        <div v-show="data.explanation" class="w-[250px] p-4 text-left">
+        <div v-show="data.explanation" class="w-[400px] p-4 text-left">
             {{ data.explanation }}
         </div>
         <Handle type="target" :position="Position.Bottom" />
