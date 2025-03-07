@@ -212,8 +212,8 @@ const mode = useColorMode()
               </MenubarTrigger>
             </MenubarMenu>
             <MenubarMenu>
-              <MenubarTrigger @click="helper.import(vueFlow)" class="gap-x-1">
-                Import <input type="file" id="fileInput" style="display: none;" accept="application/json" />
+              <MenubarTrigger @click="helper.import(vueFlow)" class="gap-x-1" asChild>
+                Import
               </MenubarTrigger>
             </MenubarMenu>
             <MenubarMenu>
@@ -231,6 +231,8 @@ const mode = useColorMode()
         </template>
       </CustomFlow>
       <Dock />
+      <input type="file" class="pointer-events-none fixed w-0 h-0" id="fileInput" style="display: none;"
+        accept="application/json" />
       <InfoDialog />
       <Toaster />
       <CustomCommandDialog />

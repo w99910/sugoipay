@@ -85,7 +85,9 @@ export default class Tree {
         targetNode.data.references = [];
       }
 
-      targetNode.data.references.push(sourceNode.id);
+      if (!targetNode.data.references.includes(sourceNode.id)) {
+        targetNode.data.references.push(sourceNode.id);
+      }
     }
     //
     if (targetConfig.appliable && !sourceConfig.appliable) {
@@ -112,9 +114,16 @@ export default class Tree {
             //   continue;
             // }
 
+            if (targetNode.data[referenceNode.type][referenceNode.id]) {
+              delete targetNode.data[referenceNode.type][referenceNode.id];
+            }
+
             targetNode.data[referenceNode.type][referenceNode.id] =
               referenceNode.data;
           } else {
+            if (targetNode.data[referenceNode.type]) {
+              delete targetNode.data[referenceNode.type];
+            }
             targetNode.data[referenceNode.type] = referenceNode.data;
           }
         }
@@ -123,7 +132,12 @@ export default class Tree {
           targetNode.data.references = [];
         }
 
-        targetNode.data.references.push(...sourceNode.data.references);
+        targetNode.data.references = [
+          ...new Set([
+            ...sourceNode.data.references,
+            ...targetNode.data.references,
+          ]),
+        ];
       }
     }
 
@@ -149,12 +163,17 @@ export default class Tree {
         targetNode.data.references = [];
       }
 
-      targetNode.data.references.push(sourceNode.id);
+      if (!targetNode.data.references.includes(sourceNode.id)) {
+        targetNode.data.references.push(sourceNode.id);
+      }
 
       if (!sourceNode.data.references) {
         sourceNode.data.references = [];
       }
-      sourceNode.data.references.push(targetNode.id);
+
+      if (!sourceNode.data.references.includes(targetNode.id)) {
+        sourceNode.data.references.push(targetNode.id);
+      }
 
       if (sourceConfig.validate) {
         sourceConfig.validate(sourceNode);
@@ -186,7 +205,10 @@ export default class Tree {
           if (!referenceNode.data.references) {
             referenceNode.data.references = [];
           }
-          referenceNode.data.references.push(targetNode.id);
+
+          if (!referenceNode.data.references.includes(targetNode.id)) {
+            referenceNode.data.references.push(targetNode.id);
+          }
         }
 
         targetNode.data.references = sourceNode.data.references;
@@ -224,8 +246,6 @@ export default class Tree {
     ) {
       return false;
     }
-
-    console.log(targetConfig.connectable, sourceNode.type);
 
     if (!targetConfig.connectable.includes(sourceNode.type)) {
       return false;

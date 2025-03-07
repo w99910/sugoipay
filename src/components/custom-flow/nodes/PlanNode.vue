@@ -21,7 +21,7 @@ import {
     NumberFieldIncrement,
     NumberFieldInput,
 } from '@/components/ui/number-field'
-const { updateNodeData, findNode } = useVueFlow();
+const { updateNodeData, findNode, nodes } = useVueFlow();
 
 // import Collisp
 const props = defineProps(['data', 'id'])
@@ -43,9 +43,12 @@ onMounted(() => {
         options: _data
     })
 
+    console.log(node)
+
 
     if (node) {
         watch(_data, () => {
+            console.log(nodes.value)
             config.connections.plan.validate(node)
         })
     }
@@ -72,9 +75,7 @@ console.log('mounted plan node')
             </div> <input class="nodrag font-semibold text-white" type="text" placeholder="Enter plan name"
                 v-model="_data.name" />
         </div>
-
         <div class="flex flex-col gap-y-2 p-2">
-
             <Collapsible defaultOpen class="group/collapsible">
                 <CollapsibleTrigger class="flex dark:text-white text-black  justify-between items-center w-full">
                     Billing

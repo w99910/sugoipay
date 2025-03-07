@@ -48,7 +48,7 @@ onNodesChange(async (changes: any) => {
 })
 
 onEdgesChange(async (changes: any) => {
-
+    // console.log('change')
     const nextChanges = [];
     for (const change of changes) {
         if (change.type === 'add') {

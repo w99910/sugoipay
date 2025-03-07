@@ -2,7 +2,7 @@
 import common from '@/lib/common';
 import { Handle, Position, useVueFlow } from '@vue-flow/core'
 import { Text } from 'lucide-vue-next';
-import { onMounted, reactive, watch } from 'vue'
+import { computed, onMounted, reactive, watch } from 'vue'
 // import Collisp
 const props = defineProps(['data', 'id'])
 
@@ -11,53 +11,85 @@ const data = reactive({
     addon: props.data.options?.addon ?? null as null | { [key: string]: any },
     explanation: props.data.options?.explanation ?? ''
 })
-const generatePlanExplanation = () => {
-    if (!data.plan) return;
-    let t = `This is a ${data.plan.options?.type} plan with a base price of $${data.plan.options?.basePrice} `;
 
-    if (data.plan.options.type === 'recurring') {
-        t += `billed every ${data.plan.options?.intervalAmount} ${data.plan.options?.interval}` + (data.plan.options?.trialCount ? ` and includes a trial period of ${data.plan.options?.trialCount} ${data.plan.options?.trialInterval}(s)` : '');
+const { findNode } = useVueFlow();
+
+const handleFeature = (feature: { [key: string]: any }) => {
+    return '';
+}
+
+const generatePlanExplanation = (plan: { [key: string]: any }) => {
+    let t = `This is a ${plan.options?.type} plan with a base price of $${plan.options?.basePrice} `;
+
+    if (plan.options.type === 'recurring') {
+        t += `billed every ${plan.options?.intervalAmount} ${plan.options?.interval}` + (plan.options?.trialCount ? ` and includes a trial period of ${plan.options?.trialCount} ${plan.options?.trialInterval}(s)` : '');
     }
 
-    t += '.'
+    t += '.';
+
+    if (plan.feature) {
+        for (const featureId of Object.keys(plan.feature)) {
+            const feature = plan.feature[featureId];
+
+            console.log(feature);
+        }
+    }
+
 
     return t;
 }
 
-const generateAddonExplanation = () => {
-    return `This is a ${data.addon!.options?.type} addon with a base price of $${data.addon!.options?.basePrice} billed every ${data.addon!.options?.intervalAmount} ${data.addon!.options?.interval}.`;
+const generateAddonExplanation = (addon: { [key: string]: any }) => {
+    let t = `This is a ${addon!.options?.type} addon with a base price of $${addon!.options?.basePrice} billed every ${addon!.options?.intervalAmount} ${addon!.options?.interval}.`;
+
+    for (const featureId of Object.keys(addon!.feature)) {
+        const feature = data.plan.feature[featureId];
+
+        console.log(feature);
+    }
+
+    return t;
 }
+
+const node = findNode(props.id);
 
 
 onMounted(() => {
-    const vueFlow = useVueFlow();
 
-    const node = vueFlow.findNode(props.id);
 
-    if (node) {
-        vueFlow.updateNodeData(props.id, {
-            options: data
-        })
-        let watchChangeTl: null | number = null;
-        const { pause, resume } = watch(() => node.data, (newData) => {
-            if (watchChangeTl) clearTimeout(watchChangeTl)
+    // if (node) {
+    //     vueFlow.updateNodeData(props.id, {
+    //         options: data
+    //     })
+    //     let watchChangeTl: null | number = null;
+    //     const { pause, resume } = watch(() => node.data, (newData) => {
+    //         console.log(newData)
+    //         // if (watchChangeTl) clearTimeout(watchChangeTl)
 
-            watchChangeTl = setTimeout(() => {
-                resume();
-            }, 300)
-            data.explanation = ''
-            pause();
-            if (newData.plan) {
-                data.plan = newData.plan;
-                data.addon = null;
-                data.explanation = generatePlanExplanation();
-            } else {
-                data.addon = newData.addon;
-                data.plan = null;
-                data.explanation = generateAddonExplanation();
-            }
-        }, { deep: true })
-    }
+    //         // watchChangeTl = setTimeout(() => {
+    //         //     resume();
+    //         // }, 300)
+    //         // data.explanation = ''
+    //         // pause();
+    //         // if (newData.plan) {
+    //         //     data.plan = newData.plan;
+    //         //     addon = null;
+    //         //     data.explanation = generatePlanExplanation();
+    //         // } else {
+    //         //     addon = newaddon;
+    //         //     data.plan = null;
+    //         //     data.explanation = generateAddonExplanation();
+    //         // }
+    //     }, { deep: true })
+    // }
+})
+
+const description = computed(() => {
+    if (!node) return '';
+
+    if (node.data.plan) return generatePlanExplanation(node.data.plan);
+
+    if (node.data.addon) return generateAddonExplanation(node.data.addon);
 })
 
 console.log('mounted explain node')
@@ -73,8 +105,8 @@ console.log('mounted explain node')
                 <Text :size="common.iconSize" color="white" />
             </div> <span class="text-white font-semibold text-sm pr-2">Explain</span>
         </div>
-        <div v-show="data.explanation" class="w-[400px] p-4 text-left">
-            {{ data.explanation }}
+        <div class="w-[400px] p-4 text-left">
+            {{ description }}
         </div>
         <Handle type="target" :position="Position.Bottom" />
     </div>

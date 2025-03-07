@@ -17,7 +17,9 @@ export default {
       nodes: nodes.value.map((node) => {
         return {
           id: node.id,
-          data: node.data,
+          data: {
+            options: node.data.options,
+          },
           position: node.position,
           type: node.type,
         };
@@ -77,7 +79,7 @@ export default {
               mapNodes[currentNode.toString()] = node.id;
             }
 
-            delete node.data?.options?.references;
+            // delete node.data?.options?.references;
 
             vueFlow.addNodes({
               id: mapNodes[currentNode.toString()],
@@ -88,20 +90,22 @@ export default {
           }
         }
 
-        if (
-          jsonData.edges &&
-          typeof jsonData.edges[Symbol.iterator] === "function"
-        ) {
-          for (const edge of jsonData.edges) {
-            const source = mapNodes[edge.source];
-            const target = mapNodes[edge.target];
-            vueFlow.addEdges({
-              id: source + "-" + target,
-              source: source,
-              target: target,
-            });
+        setTimeout(() => {
+          if (
+            jsonData.edges &&
+            typeof jsonData.edges[Symbol.iterator] === "function"
+          ) {
+            for (const edge of jsonData.edges) {
+              const source = mapNodes[edge.source];
+              const target = mapNodes[edge.target];
+              vueFlow.addEdges({
+                id: source + "-" + target,
+                source: source,
+                target: target,
+              });
+            }
           }
-        }
+        }, 400);
         // } catch (error) {
 
         //   alert("Invalid JSON file.");
