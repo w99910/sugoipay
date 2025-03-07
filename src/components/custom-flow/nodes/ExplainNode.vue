@@ -15,7 +15,42 @@ const data = reactive({
 const { findNode } = useVueFlow();
 
 const handleFeature = (feature: { [key: string]: any }) => {
-    return '';
+    console.log(feature)
+    // `Feature "${feature.name}" is a ${feature.type} feature with a total of ${feature.total}. ${feature.description || ''} It adjusts amounts by dividing by ${feature.adjustAmount?.divideBy || 'N/A'} 
+    // and rounding ${feature.adjustAmount?.round || 'N/A'}, ${feature.chargeSpecificAmountAtEachCondition ? 'charging a specific amount at each condition' : 'without charging a specific amount'}, 
+    // and is ${feature.setMeteredFeature ? '' : 'not '}set as a metered feature with a limit of ${feature.limitRequests?.limit || 'N/A'} per ${feature.limitRequest?.interval || 'N/A'}. 
+    // It also has a condition of amount ${feature.featureCondition?.amount || 'N/A'} until ${feature.featureCondition?.until || 'N/A'} 
+    // and allows customers to select quantity per unit: ${feature.letCustomerSelectQuantity?.perUnit ? 'yes' : 'no'}.`
+    let t = `Feature "${feature.options.name}" is ${feature.options.type === 'ability' && !feature.setMeteredFeature ? 'an' : 'a'} ${feature.setMeteredFeature ? 'metered' : ''}${feature.options.type} feature`;
+
+    if (feature.options.type === 'usage') {
+        t += ` limited to maximum ${feature.options.total} usage units`;
+    }
+
+    t += `. ${feature.description || ''}`;
+
+
+    // Volume pricing applies a single discounted rate once a usage threshold is met, meaning all units are charged at that lower rate. In contrast, graduated pricing uses a tiered structure where different portions of the total usage are billed at progressively lower rates, with only the units in each tier charged at that tier’s rate.
+
+
+    if (feature.featureCondition) {
+        t += ' It has tiered billing with the following rules: <br/>'
+        for (const featureConditionId of Object.keys(feature.featureCondition)) {
+            const featureCondition = feature.featureCondition[featureConditionId];
+            t += `Until the usage units reach ${featureCondition.options.until}, the price per unit is $${featureCondition.options.amount}. <br>`
+        }
+    }
+
+
+    if (feature.adjustAmount) {
+        t += `When it is consumed, provided amount will be adjusted by dividing by ${feature.adjustAmount.divideBy} and rounding ${feature.adjustAmount.round}.`
+    }
+
+    if (feature.limitRequest) {
+        t += `It also has limit requests of ${feature.limitRequests.limit} per ${feature.limitRequests.interval}`
+    }
+
+    return t;
 }
 
 const generatePlanExplanation = (plan: { [key: string]: any }) => {
@@ -31,7 +66,7 @@ const generatePlanExplanation = (plan: { [key: string]: any }) => {
         for (const featureId of Object.keys(plan.feature)) {
             const feature = plan.feature[featureId];
 
-            console.log(feature);
+            t += '<br/>' + handleFeature(feature)
         }
     }
 
@@ -45,7 +80,7 @@ const generateAddonExplanation = (addon: { [key: string]: any }) => {
     for (const featureId of Object.keys(addon!.feature)) {
         const feature = data.plan.feature[featureId];
 
-        console.log(feature);
+        t += '<br/>' + handleFeature(feature)
     }
 
     return t;
@@ -105,8 +140,7 @@ console.log('mounted explain node')
                 <Text :size="common.iconSize" color="white" />
             </div> <span class="text-white font-semibold text-sm pr-2">Explain</span>
         </div>
-        <div class="w-[400px] p-4 text-left">
-            {{ description }}
+        <div v-html="description" class="w-[400px] p-4 text-left">
         </div>
         <Handle type="target" :position="Position.Bottom" />
     </div>

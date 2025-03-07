@@ -25,7 +25,7 @@ const _data = reactive({
 })
 
 onMounted(() => {
-    const { updateNodeData, findNode } = useVueFlow();
+    const { updateNodeData, findNode, nodes } = useVueFlow();
     const node = findNode(props.id);
 
     if (node) {

@@ -21,7 +21,7 @@ import { toast } from 'vue-sonner'
 import Tree from '@/lib/tree'
 import LimitRequests from './nodes/LimitRequests.vue'
 import { useColorMode } from '@vueuse/core'
-import { key } from '@/lib/helper'
+import helper, { key } from '@/lib/helper'
 import PriceNode from './nodes/PriceNode.vue'
 const { onDragOver, onDragLeave, isDragOver } = useDragAndDrop()
 
@@ -226,13 +226,16 @@ onNodeDragStop((drag) => {
 
 onMounted(() => {
     onInit(() => {
+        tree = new Tree(vueFlow);
+
         const value = localStorage.getItem(key);
         if (value) {
             const flow = JSON.parse(value)
-            fromObject(flow)
+            fromObject({ position: flow.position, viewport: flow.viewport, zoom: flow.zoom, nodes: [], edges: [] })
+
+            helper.importNodesAndEdges(vueFlow, flow.nodes, flow.edges);
         }
 
-        tree = new Tree(vueFlow);
     })
 })
 

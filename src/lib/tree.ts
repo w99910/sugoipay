@@ -1,6 +1,6 @@
 import type { GraphEdge, GraphNode, VueFlowStore } from "@vue-flow/core";
 import { data, config } from "./global";
-import { toRaw } from "vue";
+import { toRaw, isReactive } from "vue";
 
 type onNodeUpdateFn = (effectedNode: string, sourceNode: string) => void;
 type CanApplyFn = (
@@ -114,16 +114,16 @@ export default class Tree {
             //   continue;
             // }
 
-            if (targetNode.data[referenceNode.type][referenceNode.id]) {
-              delete targetNode.data[referenceNode.type][referenceNode.id];
-            }
+            // if (targetNode.data[referenceNode.type][referenceNode.id]) {
+            //   delete targetNode.data[referenceNode.type][referenceNode.id];
+            // }
 
             targetNode.data[referenceNode.type][referenceNode.id] =
               referenceNode.data;
           } else {
-            if (targetNode.data[referenceNode.type]) {
-              delete targetNode.data[referenceNode.type];
-            }
+            // if (targetNode.data[referenceNode.type]) {
+            //   delete targetNode.data[referenceNode.type];
+            // }
             targetNode.data[referenceNode.type] = referenceNode.data;
           }
         }
@@ -152,8 +152,7 @@ export default class Tree {
           sourceNode.data[targetNode.type] = {};
         }
 
-        sourceNode.data[targetNode.type][targetNode.id] =
-          targetNode.data.options;
+        sourceNode.data[targetNode.type][targetNode.id] = targetNode.data;
       } else {
         sourceNode.data[targetNode.type] = targetNode.data.options;
       }
@@ -197,7 +196,7 @@ export default class Tree {
             }
 
             referenceNode.data[targetNode.type][targetNode.id] =
-              targetNode.data.options;
+              targetNode.data;
           } else {
             referenceNode.data[targetNode.type] = targetNode.data.options;
           }
@@ -330,7 +329,7 @@ export default class Tree {
         bottomLinks.push([source]);
       }
 
-      console.log(topLinks, bottomLinks);
+      // console.log({ topLinks, bottomLinks });
 
       for (let i = 0; i < topLinks.length; i++) {
         const topLink = topLinks[i];
@@ -339,7 +338,7 @@ export default class Tree {
         // if first node of bottom link doesn't have references, pass
 
         for (let j = 0; j < bottomLinks.length; j++) {
-          const bottomLink = bottomLinks[i];
+          const bottomLink = bottomLinks[j];
           const firstNodeOfBottomLink = this.vueFlow.findNode(bottomLink[0]);
 
           for (let k = topLink.length - 1; k >= 0; k--) {
@@ -386,8 +385,6 @@ export default class Tree {
       }
 
       // this.applyEffect(target, source);
-
-      console.log(toRaw(this.vueFlow.nodes.value));
       return true;
     } catch (e) {
       console.log(e, this.links, { target, source });
@@ -510,7 +507,7 @@ export default class Tree {
       }
     }
 
-    console.log(this.vueFlow.nodes.value, this.linksWithType);
+    // console.log(this.vueFlow.nodes.value, this.linksWithType);
 
     return true;
   }
@@ -538,7 +535,7 @@ export default class Tree {
 
     this.applyEffect(current, source);
 
-    console.log(this.vueFlow.nodes.value, this.linksWithType);
+    // console.log(this.vueFlow.nodes.value, this.linksWithType);
 
     return true;
   }

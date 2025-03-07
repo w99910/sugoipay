@@ -43,20 +43,13 @@ onMounted(() => {
         options: _data
     })
 
-    console.log(node)
-
-
     if (node) {
         watch(_data, () => {
             console.log(nodes.value)
             config.connections.plan.validate(node)
         })
     }
-
-
 })
-
-console.log('mounted plan node')
 
 </script>
 

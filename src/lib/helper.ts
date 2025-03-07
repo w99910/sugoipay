@@ -1,4 +1,8 @@
-import { type VueFlowStore } from "@vue-flow/core";
+import {
+  type GraphEdge,
+  type GraphNode,
+  type VueFlowStore,
+} from "@vue-flow/core";
 import { toast } from "vue-sonner";
 export const key = "sugoipay-flow--save-restore";
 
@@ -45,6 +49,43 @@ export default {
 
     URL.revokeObjectURL(url);
   },
+  importNodesAndEdges: function (
+    vueFlow: VueFlowStore,
+    nodes: Array<GraphNode>,
+    edges: Array<GraphEdge>
+  ) {
+    let currentNodeLength = vueFlow.nodes.value.length;
+    const mapNodes: { [key: string]: string } = {};
+    for (const node of nodes) {
+      let currentNode = parseInt(node.id);
+      if (currentNode < currentNodeLength) {
+        mapNodes[currentNode.toString()] = (currentNodeLength + 1).toString();
+      } else {
+        mapNodes[currentNode.toString()] = node.id;
+      }
+
+      // delete node.data?.options?.references;
+
+      vueFlow.addNodes({
+        id: mapNodes[currentNode.toString()],
+        position: node.position,
+        data: node.data,
+        type: node.type,
+      });
+    }
+
+    setTimeout(() => {
+      for (const edge of edges) {
+        const source = mapNodes[edge.source];
+        const target = mapNodes[edge.target];
+        vueFlow.addEdges({
+          id: source + "-" + target,
+          source: source,
+          target: target,
+        });
+      }
+    }, 200);
+  },
   import: function (vueFlow: VueFlowStore) {
     const fileInput = document.getElementById("fileInput");
 
@@ -60,56 +101,15 @@ export default {
       }
 
       const reader = new FileReader();
-      reader.onload = function (e) {
+      reader.onload = (e) => {
         // try {
         const jsonData = JSON.parse(e.target.result);
-        let currentNodeLength = vueFlow.nodes.value.length;
-        const mapNodes: { [key: string]: string } = {};
-        if (
-          jsonData.nodes &&
-          typeof jsonData.nodes[Symbol.iterator] === "function"
-        ) {
-          for (const node of jsonData.nodes) {
-            let currentNode = parseInt(node.id);
-            if (currentNode < currentNodeLength) {
-              mapNodes[currentNode.toString()] = (
-                currentNodeLength + 1
-              ).toString();
-            } else {
-              mapNodes[currentNode.toString()] = node.id;
-            }
 
-            // delete node.data?.options?.references;
-
-            vueFlow.addNodes({
-              id: mapNodes[currentNode.toString()],
-              position: node.position,
-              data: node.data,
-              type: node.type,
-            });
-          }
-        }
-
-        setTimeout(() => {
-          if (
-            jsonData.edges &&
-            typeof jsonData.edges[Symbol.iterator] === "function"
-          ) {
-            for (const edge of jsonData.edges) {
-              const source = mapNodes[edge.source];
-              const target = mapNodes[edge.target];
-              vueFlow.addEdges({
-                id: source + "-" + target,
-                source: source,
-                target: target,
-              });
-            }
-          }
-        }, 400);
-        // } catch (error) {
-
-        //   alert("Invalid JSON file.");
-        // }
+        this.importNodesAndEdges(
+          vueFlow,
+          jsonData.nodes ? jsonData.nodes : [],
+          jsonData.edges ? jsonData.edges : []
+        );
       };
 
       reader.readAsText(file);
